@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class City : MonoBehaviour {
 	
@@ -10,6 +11,21 @@ public class City : MonoBehaviour {
 	List<Building> buildings = new List<Building>();
 	List<Street> streets = new List<Street>();
 	
+	public Vector2 SizeMin {
+		get; private set;
+	}
+	
+	public Vector2 SizeMax {
+		get; private set;
+	}
+	
+	void Awake() {
+		if(Globals.City != null) {
+			throw new Exception("Only one city allowed!");
+		}
+		Globals.City = this;
+	}
+
 	// Use this for initialization
 	void Start () {
 		createCityRegular();
@@ -51,6 +67,8 @@ public class City : MonoBehaviour {
 			}
 		}
 		// create
+		SizeMin = new Vector3(-size/2, 0, -size/2);
+		SizeMax = new Vector3(size-size/2+1, 0, size-size/2+1);
 		for(int i=0; i<size; i++) {
 			for(int j=0; j<size; j++) {
 				GameObject u;
