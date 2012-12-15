@@ -36,7 +36,7 @@ public static class MoreMath
 	}
 
 	public static float VectorAngle(Vector3 v) {
-		return Mathf.Atan2(v.y, v.x);
+		return Mathf.Atan2(v.z, v.x);
 	}
 
 	public static Quaternion RotAngle(float angle) {

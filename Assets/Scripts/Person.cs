@@ -15,7 +15,7 @@ public class Person : MonoBehaviour {
 	const float TARGET_HIT_RANGE = 0.1f;
 	const float DEATH_COOLDOWN = 5.0f;
 	const float DEATH_FALLTIME = 1.0f;
-	const float ROTATION_MIX_STRENGTH = 0.5f;
+	const float ROTATION_MIX_STRENGTH =0.9f;
 	
 	int hitpoints = 10;
 	bool isDead = false;
@@ -151,7 +151,7 @@ public class Person : MonoBehaviour {
 			float angle_old = MoreMath.VectorAngle(transform.localRotation * Vector3.right);
 			float angle_new = MoreMath.VectorAngle(move.normalized);
 			float angle_final = MoreMath.SlerpAngle(angle_old, angle_new, ROTATION_MIX_STRENGTH * MyTime.deltaTime);
-			transform.localRotation = MoreMath.RotAngle(angle_final);
+			transform.localRotation = MoreMath.RotAngle(-angle_final);
 		}
 		else {
 			// new position is not possible
