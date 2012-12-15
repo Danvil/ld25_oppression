@@ -11,12 +11,34 @@ public class City : MonoBehaviour {
 	List<Building> buildings = new List<Building>();
 	List<Street> streets = new List<Street>();
 	
-	public Vector2 SizeMin {
+	int block_count = 3;
+	int size;
+	
+	// tells if a square is blocked by a building
+	int[,] occupancyLayer;
+	
+	public Vector3 SizeMin {
 		get; private set;
 	}
 	
-	public Vector2 SizeMax {
+	public Vector3 SizeMax {
 		get; private set;
+	}
+	
+	public bool IsBlocked(int x, int y) {
+		if(	   x < 0 || size <= x
+			|| y < 0 || size <= y) {
+			return false;
+		}
+		else {
+			return occupancyLayer[x,y] == 1;
+		}
+	}
+	
+	public bool IsBlocked(Vector3 p) {
+		return IsBlocked(
+			Mathf.FloorToInt(p.x),
+			Mathf.FloorToInt(p.z));
 	}
 	
 	void Awake() {
@@ -24,11 +46,16 @@ public class City : MonoBehaviour {
 			throw new Exception("Only one city allowed!");
 		}
 		Globals.City = this;
+		size = 1 + block_count*4;
+		SizeMin = Vector3.zero;
+		SizeMax = new Vector3((float)size+1.0f, 0.0f, (float)size+1.0f);
 	}
 
 	// Use this for initialization
 	void Start () {
 		createCityRegular();
+		Vector3 cityCenter = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin);
+		Globals.MainCamera.transform.position = new Vector3(cityCenter.x, Globals.MainCamera.transform.position.y, cityCenter.z);
 	}
 	
 	// Update is called once per frame
@@ -37,42 +64,38 @@ public class City : MonoBehaviour {
 	}
 	
 	void createCityRegular() {
-		const int n = 3;
-		const int size = 1 + n*4;
 		// init city layer
-		int[,] layer = new int[size,size];
+		occupancyLayer = new int[size,size];
 		for(int i=0; i<size; i++) {
 			for(int j=0; j<size; j++) {
-				layer[i,j] = 0;
+				occupancyLayer[i,j] = 0;
 			}
 		}
 		// set houses (3x3)
-		for(int i=0; i<n; i++) {
-			for(int j=0; j<n; j++) {
+		for(int i=0; i<block_count; i++) {
+			for(int j=0; j<block_count; j++) {
 				int x = 1 + j*4;
 				int y = 1 + i*4;
-				if(i==n/2 && j==n/2) {
+				if(i==block_count/2 && j==block_count/2) {
 					// square
 				}
 				else {
-					layer[x,y] = 1;
-					layer[x+1,y] = 1;
-					layer[x+2,y] = 1;
-					layer[x,y+1] = 1;
-					layer[x+2,y+1] = 1;
-					layer[x,y+2] = 1;
-					layer[x+1,y+2] = 1;
-					layer[x+2,y+2] = 1;
+					occupancyLayer[x,y] = 1;
+					occupancyLayer[x+1,y] = 1;
+					occupancyLayer[x+2,y] = 1;
+					occupancyLayer[x,y+1] = 1;
+					occupancyLayer[x+2,y+1] = 1;
+					occupancyLayer[x,y+2] = 1;
+					occupancyLayer[x+1,y+2] = 1;
+					occupancyLayer[x+2,y+2] = 1;
 				}
 			}
 		}
 		// create
-		SizeMin = new Vector3(-size/2, 0, -size/2);
-		SizeMax = new Vector3(size-size/2+1, 0, size-size/2+1);
 		for(int i=0; i<size; i++) {
 			for(int j=0; j<size; j++) {
 				GameObject u;
-				if(layer[i,j] == 1) {
+				if(occupancyLayer[i,j] == 1) {
 					// create building
 					u = (GameObject)Instantiate(pfBuilding);
 					buildings.Add(u.GetComponent<Building>());
@@ -82,7 +105,7 @@ public class City : MonoBehaviour {
 					u = (GameObject)Instantiate(pfStreet);
 					streets.Add(u.GetComponent<Street>());
 				}
-				u.transform.position = new Vector3(j-size/2,0,i-size/2);
+				u.transform.position = new Vector3(j,0,i);
 				u.transform.parent = this.transform;
 			}
 		}

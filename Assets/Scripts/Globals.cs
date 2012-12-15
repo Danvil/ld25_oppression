@@ -10,7 +10,7 @@ public class Globals : MonoBehaviour {
 	public static PeopleManager People;
 	
 	void Awake() {
-		MainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
+		MainCamera = GameObject.Find("Camera").GetComponent<Camera>();
 	}
 
 	// Use this for initialization

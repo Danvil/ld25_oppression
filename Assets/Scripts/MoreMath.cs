@@ -64,6 +64,13 @@ public static class MoreMath
 		}
 	}
 
+	public static Vector3 RandomInsideBox(Vector3 min, Vector3 max) {
+		return new Vector3(
+			Random.Range(min.x,max.x),
+			Random.Range(min.y,max.y),
+			Random.Range(min.z,max.z));
+	}
+
 	public static float PoissonProbability(float frequency, float dt) {
 		return 1.0f - Mathf.Exp(- frequency * dt);
 	}

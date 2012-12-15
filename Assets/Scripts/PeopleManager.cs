@@ -40,9 +40,10 @@ public class PeopleManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Vector3 center = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin);
 		for(int i=0; i<100; i++) {
-			GameObject x = (GameObject)Instantiate(pfRebel);
-			x.transform.position = MoreMath.RandomInsideUnitCircleXZ;
+			GameObject x = (GameObject)Instantiate(pfRebel);		
+			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + center;
 			x.transform.parent = this.transform;
 			Add(x.GetComponent<Rebel>());
 		}

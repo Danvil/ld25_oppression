@@ -15,7 +15,8 @@ public class Rebel : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		setNewGoal();
+		goalWaitTime = 0.5f;
+		goalFollowTime = 0.0f;
 	}
 	
 	// Update is called once per frame
@@ -44,16 +45,27 @@ public class Rebel : MonoBehaviour {
 				move *= MAX_SPEED / mag;
 			}
 			// compute new position
-			transform.position += MyTime.deltaTime * move;
-			transform.position = new Vector3(transform.position.x, 0, transform.position.z);
+			Vector3 npos = transform.position + MyTime.deltaTime * move;
+			npos = new Vector3(npos.x, 0, npos.z);
+			if(!Globals.City.IsBlocked(npos)) {
+				transform.position = npos;
+			}
+			else {
+				// new position is not possible
+			}
 		}
 	}
 	
 	void setNewGoal() {
-		goal = new Vector3(
-			Random.Range(Globals.City.SizeMin.x,Globals.City.SizeMax.x),
-			0.0f,
-			Random.Range(Globals.City.SizeMin.y,Globals.City.SizeMax.y));
+		for(int i=0; i<3; i++) {
+			// create new random goal
+			Vector3 ngoal = MoreMath.RandomInsideBox(Globals.City.SizeMin, Globals.City.SizeMax);
+			// check if goal is reachable
+			if(!Globals.City.IsBlocked(ngoal)) {
+				goal = ngoal;
+				break;
+			}
+		}
 		goalWaitTime = Random.Range(1.0f, 3.0f);
 		goalFollowTime = 5.0f;
 	}
