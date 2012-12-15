@@ -9,6 +9,8 @@ public class Globals : MonoBehaviour {
 	
 	public static PeopleManager People;
 	
+	public static DecalManager DecalManager;
+	
 	void Awake() {
 		MainCamera = GameObject.Find("Camera").GetComponent<Camera>();
 	}
