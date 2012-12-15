@@ -1,6 +1,23 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DecalManager.cs">
+    <Files>
+      <File FileName="Assets\Scripts\BuildingMesh.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\QuadMesh.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\City.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Street.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Building.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Rebel.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\MoreMath.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Globals.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\PeopleManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Camera.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Person.cs" Line="107" Column="25" />
+      <File FileName="Assets\Scripts\Police.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Decal.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DecalManager.cs" Line="22" Column="87" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
