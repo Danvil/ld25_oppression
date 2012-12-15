@@ -5,8 +5,8 @@ public class Rebel : MonoBehaviour {
 	
 	const float MAX_SPEED = 0.1f;
 	const float GOAL_REACHED_TOLERANCE = 0.01f;
-	const float RADIUS = 0.1f;
-	const float AVOID_RADIUS = 0.5f;
+	const float RADIUS = 0.05f;
+	const float AVOID_RADIUS = 0.4f;
 	const float AVOID_STRENGTH = 0.5f;
 	
 	Vector3 goal;
