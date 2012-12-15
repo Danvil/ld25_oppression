@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-public class Rebel : MonoBehaviour {
-	
+public class Police : MonoBehaviour {
+
 	// Use this for initialization
 	void Start () {
 	

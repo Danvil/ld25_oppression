@@ -52,6 +52,8 @@
      <Compile Include="Assets\Scripts\MoreMath.cs" />
      <Compile Include="Assets\Scripts\MyTime.cs" />
      <Compile Include="Assets\Scripts\PeopleManager.cs" />
+     <Compile Include="Assets\Scripts\Person.cs" />
+     <Compile Include="Assets\Scripts\Police.cs" />
      <Compile Include="Assets\Scripts\QuadMesh.cs" />
      <Compile Include="Assets\Scripts\Rebel.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
