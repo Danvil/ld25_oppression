@@ -48,6 +48,7 @@
      <Compile Include="Assets\Scripts\BuildingMesh.cs" />
      <Compile Include="Assets\Scripts\City.cs" />
      <Compile Include="Assets\Scripts\QuadMesh.cs" />
+     <Compile Include="Assets\Scripts\Rebel.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
