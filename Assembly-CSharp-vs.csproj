@@ -47,6 +47,9 @@
      <Compile Include="Assets\Scripts\Building.cs" />
      <Compile Include="Assets\Scripts\BuildingMesh.cs" />
      <Compile Include="Assets\Scripts\City.cs" />
+     <Compile Include="Assets\Scripts\Globals.cs" />
+     <Compile Include="Assets\Scripts\MoreMath.cs" />
+     <Compile Include="Assets\Scripts\MyTime.cs" />
      <Compile Include="Assets\Scripts\QuadMesh.cs" />
      <Compile Include="Assets\Scripts\Rebel.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
