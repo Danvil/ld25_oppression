@@ -104,7 +104,7 @@ public class Person : MonoBehaviour {
 			return false;
 		}
 		if(faction == FACTION_REBEL) {
-			target.hitpoints -= 3;
+			target.hitpoints -= 2;
 		}
 		else if(faction == FACTION_POLICE) {
 			target.hitpoints -= 4;
