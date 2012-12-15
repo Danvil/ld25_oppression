@@ -57,10 +57,10 @@ public static class MoreMath
 		return new Color(0.5f*(1.0f + x), 0.0f, 0.5f*(1.0f - x));
 	}
 
-	public static Vector3 RandomInsideUnitCircle3 {
+	public static Vector3 RandomInsideUnitCircleXZ {
 		get {
 			Vector2 u = Random.insideUnitCircle;
-			return new Vector3(u.x, u.y, 0.0f);
+			return new Vector3(u.x, 0.0f, u.y);
 		}
 	}
 

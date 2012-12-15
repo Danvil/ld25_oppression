@@ -5,6 +5,9 @@ public class Rebel : MonoBehaviour {
 	
 	const float MAX_SPEED = 0.1f;
 	const float GOAL_REACHED_TOLERANCE = 0.01f;
+	const float RADIUS = 0.1f;
+	const float AVOID_RADIUS = 0.5f;
+	const float AVOID_STRENGTH = 0.5f;
 	
 	Vector3 goal;
 	float goalWaitTime;
@@ -34,7 +37,7 @@ public class Rebel : MonoBehaviour {
 			Debug.DrawRay(this.transform.position, moveLevel, Color.blue);
 			Vector3 move = moveFollow + moveAvoid + moveLevel;
 			// some randomness
-			move += 0.05f * MoreMath.RandomInsideUnitCircle3;
+			move += 0.05f * MoreMath.RandomInsideUnitCircleXZ;
 			// limit max velocity
 			float mag = move.magnitude;
 			if(mag > MAX_SPEED) {
@@ -42,7 +45,7 @@ public class Rebel : MonoBehaviour {
 			}
 			// compute new position
 			transform.position += MyTime.deltaTime * move;
-			transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+			transform.position = new Vector3(transform.position.x, 0, transform.position.z);
 		}
 	}
 	
@@ -63,8 +66,19 @@ public class Rebel : MonoBehaviour {
 		return MAX_SPEED * (goal - transform.position).normalized;
 	}
 
+	float avoidFalloff(float d, float d_min) {
+		float z = Mathf.Max(d/d_min, 0.4f);
+		return 1.0f / (z*z);
+	}
+
 	Vector3 computeAvoidOther() {
-		return new Vector3(0,0,0);
+		Vector3 force = Vector3.zero;
+		float d_min = 2.0f * RADIUS;
+		foreach(GameObject x in Globals.People.GetInRange(gameObject, AVOID_RADIUS)) {
+			Vector3 delta = x.transform.position - transform.position;
+			force -= avoidFalloff(delta.magnitude, d_min) * delta.normalized;
+		}
+		return AVOID_STRENGTH * force;
 	}
 	
 	Vector3 computeAvoidLevel() {

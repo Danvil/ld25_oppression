@@ -7,6 +7,8 @@ public class Globals : MonoBehaviour {
 
 	public static City City;
 	
+	public static PeopleManager People;
+	
 	void Awake() {
 		MainCamera = GameObject.Find("Main Camera").GetComponent<Camera>();
 	}
