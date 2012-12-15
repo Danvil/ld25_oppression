@@ -1,9 +1,33 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 public class PeopleManager : MonoBehaviour {
+	
+	public AudioClip[] audioHit;
+	public AudioClip[] audioDeath;
+	
+	AudioClip GetRandom(AudioClip[] v) {
+		if(v.Length > 0) {
+			int q = Random.Range(0, v.Length - 1);
+			return v[q];
+		}
+		else {
+			return null;
+		}
+	}
+	
+	public AudioClip RandomHitAudio {
+		get {
+			return GetRandom(audioHit);
+		}
+	}
+	
+	public AudioClip RandomDeathAudio {
+		get {
+			return GetRandom(audioDeath);
+		}
+	}
 	
 	public GameObject pfRebel;
 	public GameObject pfPolice;
@@ -12,6 +36,12 @@ public class PeopleManager : MonoBehaviour {
 	
 	public void Add(Person x) {
 		rebels.Add(x);
+	}
+	
+	public void Kill(Person x) {
+		if(rebels.Remove(x)) {
+			Destroy(x.gameObject);
+		}
 	}
 	
 	public IEnumerable<Person> GetInRange(Vector3 pos, float r) {
@@ -23,7 +53,7 @@ public class PeopleManager : MonoBehaviour {
 		}
 	}
 
-	public IEnumerable<Person> GetInRange(GameObject source, float r) {
+	public IEnumerable<Person> GetInRange(Person source, float r) {
 		foreach(Person x in rebels.ToArray()) {
 			float d = (source.transform.position - x.transform.position).magnitude;
 			if(x != source && d < r) {
@@ -34,7 +64,7 @@ public class PeopleManager : MonoBehaviour {
 
 	void Awake() {
 		if(Globals.People != null) {
-			throw new Exception("Only one instance of class PeopleManager allowed!");
+			throw new System.Exception("Only one instance of class PeopleManager allowed!");
 		}
 		Globals.People = this;
 	}

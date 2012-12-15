@@ -40,7 +40,7 @@ public static class MoreMath
 	}
 
 	public static Quaternion RotAngle(float angle) {
-		return Quaternion.AngleAxis(Mathf.Rad2Deg * angle, Vector3.forward);
+		return Quaternion.AngleAxis(Mathf.Rad2Deg * angle, Vector3.up);
 	}
 
 	public static Quaternion RotHeading(Vector3 heading) {
@@ -77,6 +77,14 @@ public static class MoreMath
 
 	public static bool CheckOccurence(float frequency) {
 		return Random.value < PoissonProbability(frequency, MyTime.deltaTime);
+	}
+
+	public static float SlerpAngle(float x, float y, float p) {
+		float d = y - x;
+		if(d > Mathf.PI) {
+			d = 2.0f * Mathf.PI - d;
+		}
+		return x + p * d;
 	}
 
 }
