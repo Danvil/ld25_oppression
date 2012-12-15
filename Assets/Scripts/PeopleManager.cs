@@ -14,20 +14,20 @@ public class PeopleManager : MonoBehaviour {
 		rebels.Add(x);
 	}
 	
-	public IEnumerable<GameObject> GetInRange(Vector3 pos, float r) {
+	public IEnumerable<Person> GetInRange(Vector3 pos, float r) {
 		foreach(Person x in rebels.ToArray()) {
 			float d = (pos - x.transform.position).magnitude;
 			if(d < r) {
-				yield return x.gameObject;
+				yield return x;
 			}
 		}
 	}
 
-	public IEnumerable<GameObject> GetInRange(GameObject source, float r) {
+	public IEnumerable<Person> GetInRange(GameObject source, float r) {
 		foreach(Person x in rebels.ToArray()) {
 			float d = (source.transform.position - x.transform.position).magnitude;
 			if(x != source && d < r) {
-				yield return x.gameObject;
+				yield return x;
 			}
 		}
 	}
@@ -40,20 +40,24 @@ public class PeopleManager : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Start() {
 		Vector3 centerRebel = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,0);
 		for(int i=0; i<50; i++) {
 			GameObject x = (GameObject)Instantiate(pfRebel);		
 			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerRebel;
 			x.transform.parent = this.transform;
-			Add(x.GetComponent<Person>());
+			Person p = x.GetComponent<Person>();
+			p.faction = Person.FACTION_REBEL;
+			Add(p);
 		}
 		Vector3 centerPolice = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) - new Vector3(0,0,2);
 		for(int i=0; i<50; i++) {
 			GameObject x = (GameObject)Instantiate(pfPolice);		
 			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerPolice;
 			x.transform.parent = this.transform;
-			Add(x.GetComponent<Person>());
+			Person p = x.GetComponent<Person>();
+			p.faction = Person.FACTION_POLICE;
+			Add(p);
 		}
 	}
 	

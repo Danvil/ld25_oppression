@@ -7,31 +7,41 @@ public class Person : MonoBehaviour {
 	const float GOAL_REACHED_TOLERANCE = 0.01f;
 	const float RADIUS = 0.05f;
 	const float AVOID_RADIUS = 0.4f;
-	const float AVOID_STRENGTH = 0.5f;
+	const float AVOID_STRENGTH_OWN = 0.3f;
+	const float AVOID_STRENGTH_OTHER = 1.0f;
 	
 	Vector3 goal;
 	float goalWaitTime;
 	float goalFollowTime;
 	
+	bool isStatic;
+	
+	public int faction;
+	
+	public const int FACTION_REBEL = 0;
+	public const int FACTION_POLICE = 1;
+	
 	// Use this for initialization
 	void Start () {
-		goalWaitTime = 0.5f;
+		isStatic = true;
+		goalWaitTime = 0.0f;
 		goalFollowTime = 0.0f;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		goalFollowTime -= MyTime.deltaTime;
-		if(goalFollowTime < 0.0f) {
-			setNewGoal();
-		}
-		else if(isGoalReached()) {
+		if(goalFollowTime < 0.0f || isGoalReached() || isStatic) {
+			isStatic = true;
 			goalWaitTime -= MyTime.deltaTime;
 			if(goalWaitTime < 0.0f) {
 				setNewGoal();
 			}
 		}
 		else {
+			if(isStatic) {
+				return;
+			}
 			Vector3 moveFollow = computeGoalFollow();
 			Vector3 moveAvoid = computeAvoidOther();
 			Vector3 moveLevel = computeAvoidLevel();
@@ -52,6 +62,7 @@ public class Person : MonoBehaviour {
 			}
 			else {
 				// new position is not possible
+				isStatic = true;
 			}
 		}
 	}
@@ -63,11 +74,13 @@ public class Person : MonoBehaviour {
 			// check if goal is reachable
 			if(!Globals.City.IsBlocked(ngoal)) {
 				goal = ngoal;
+				isStatic = false;
 				break;
 			}
 		}
-		goalWaitTime = Random.Range(1.0f, 3.0f);
-		goalFollowTime = 5.0f;
+		goalWaitTime = Random.Range(0.0f, 2.0f);
+		goalFollowTime = Random.Range(3.0f, 5.0f);
+		isStatic = false;
 	}
 
 	bool isGoalReached() {
@@ -86,11 +99,12 @@ public class Person : MonoBehaviour {
 	Vector3 computeAvoidOther() {
 		Vector3 force = Vector3.zero;
 		float d_min = 2.0f * RADIUS;
-		foreach(GameObject x in Globals.People.GetInRange(gameObject, AVOID_RADIUS)) {
+		foreach(Person x in Globals.People.GetInRange(gameObject, AVOID_RADIUS)) {
 			Vector3 delta = x.transform.position - transform.position;
-			force -= avoidFalloff(delta.magnitude, d_min) * delta.normalized;
+			float str = (x.faction != this.faction ? AVOID_STRENGTH_OTHER : AVOID_STRENGTH_OWN);
+			force -= str * avoidFalloff(delta.magnitude, d_min) * delta.normalized;
 		}
-		return AVOID_STRENGTH * force;
+		return force;
 	}
 	
 	Vector3 computeAvoidLevel() {
