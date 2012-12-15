@@ -35,14 +35,19 @@ public class City : MonoBehaviour {
 			for(int j=0; j<n; j++) {
 				int x = 1 + j*4;
 				int y = 1 + i*4;
-				layer[x,y] = 1;
-				layer[x+1,y] = 1;
-				layer[x+2,y] = 1;
-				layer[x,y+1] = 1;
-				layer[x+2,y+1] = 1;
-				layer[x,y+2] = 1;
-				layer[x+1,y+2] = 1;
-				layer[x+2,y+2] = 1;
+				if(i==n/2 && j==n/2) {
+					// square
+				}
+				else {
+					layer[x,y] = 1;
+					layer[x+1,y] = 1;
+					layer[x+2,y] = 1;
+					layer[x,y+1] = 1;
+					layer[x+2,y+1] = 1;
+					layer[x,y+2] = 1;
+					layer[x+1,y+2] = 1;
+					layer[x+2,y+2] = 1;
+				}
 			}
 		}
 		// create
@@ -59,7 +64,7 @@ public class City : MonoBehaviour {
 					u = (GameObject)Instantiate(pfStreet);
 					streets.Add(u.GetComponent<Street>());
 				}
-				u.transform.position = new Vector3(j,0,i);
+				u.transform.position = new Vector3(j-size/2,0,i-size/2);
 				u.transform.parent = this.transform;
 			}
 		}
