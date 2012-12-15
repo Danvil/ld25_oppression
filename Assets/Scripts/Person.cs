@@ -8,9 +8,9 @@ public class Person : MonoBehaviour {
 	const float GOAL_REACHED_TOLERANCE = 0.01f;
 	const float RADIUS = 0.04f;
 	const float AVOID_RADIUS = 0.35f;
-	const float AVOID_STRENGTH_OWN = 0.3f;
-	const float AVOID_STRENGTH_OTHER = 0.8f;
-	const float AVOID_STRENGTH_ATTACK = 0.05f;
+	const float AVOID_STRENGTH_OWN = 0.1f;
+	const float AVOID_STRENGTH_OTHER = 0.5f;
+	const float AVOID_STRENGTH_ATTACK = 0.02f;
 	const float CHECK_TARGET_RADIUS = 0.4f;
 	const float TARGET_HIT_RANGE = 0.1f;
 	const float DEATH_COOLDOWN = 5.0f;
@@ -166,6 +166,8 @@ public class Person : MonoBehaviour {
 		Person closest_target = null;
 		float closest_dist = 1000.0f;
 		foreach(Person x in Globals.People.GetInRange(this, CHECK_TARGET_RADIUS)) {
+			if(x.isDead)
+				continue;
 			cnt_total ++;
 			if(x.faction != this.faction) {
 				cnt_balance --;
