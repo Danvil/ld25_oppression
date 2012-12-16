@@ -13,8 +13,9 @@ public class Person : MonoBehaviour {
 	const float TARGET_HIT_RANGE = 0.1f;
 	const float DEATH_COOLDOWN = 10.0f;
 	const float DEATH_FALLTIME = 0.7f;
-	const float ROTATION_MIX_STRENGTH = 0.9f;
 	const float DEATH_WITNESS_RANGE = 2.0f;
+	const float ROTATION_MIX_STRENGTH = 0.3f;
+	const float VELOCITY_MIX_STRENGTH = 0.04f;
 	
 	public int hitpointsMax = 10;
 	public int damage = 1;
@@ -36,6 +37,7 @@ public class Person : MonoBehaviour {
 	Person murderer;	
 	float attackCooldown;
 	RandomGoalPicker randomGoalPicker;
+	Vector3 velocityOld = Vector3.zero;
 	
 	// Use this for initialization
 	void Start () {
@@ -145,14 +147,13 @@ public class Person : MonoBehaviour {
 		// some randomness
 		move += 0.05f * MoreMath.RandomInsideUnitCircleXZ;
 		// limit max velocity
-		float mag = move.magnitude;
 		float speed = IsFast ? SPEED_NORMAL : SPEED_FAST;
-		//if(mag > speed) {
-			move *= speed / mag;
-		//}
+		move *= speed / move.magnitude;
+		Vector3 velocity = MoreMath.Interpolate(velocityOld, move, VELOCITY_MIX_STRENGTH);
+		velocityOld = velocity;
 		
 		// compute new position
-		Vector3 npos = transform.position + MyTime.deltaTime * move;
+		Vector3 npos = transform.position + MyTime.deltaTime * velocity;
 		npos = new Vector3(npos.x, 0, npos.z);
 		if(!Globals.City.IsBlocked(npos)) {
 			transform.position = npos;

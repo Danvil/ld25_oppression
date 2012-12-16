@@ -78,6 +78,14 @@ public static class MoreMath
 	public static bool CheckOccurence(float frequency) {
 		return Random.value < PoissonProbability(frequency, MyTime.deltaTime);
 	}
+	
+	public static float Interpolate(float a, float b, float p) {
+		return (1.0f - p)*a + p*b;
+	}
+
+	public static Vector3 Interpolate(Vector3 a, Vector3 b, float p) {
+		return (1.0f - p)*a + p*b;
+	}
 
 	public static float SlerpAngle(float x, float y, float p) {
 		float d = y - x;
