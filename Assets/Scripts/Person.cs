@@ -16,8 +16,9 @@ public class Person : MonoBehaviour {
 	const float DEATH_COOLDOWN = 5.0f;
 	const float DEATH_FALLTIME = 1.0f;
 	const float ROTATION_MIX_STRENGTH =0.9f;
+	const int MAX_HITPOINTS = 10;
 	
-	int hitpoints = 10;
+	int hitpoints = MAX_HITPOINTS;
 	bool isDead = false;
 	float deathTime = 0.0f;
 	Vector3 death_axis;
@@ -86,6 +87,11 @@ public class Person : MonoBehaviour {
 				if(!attack()) move();
 			}
 		}
+		float bleed_freq = 1.0f - (float)hitpoints / (float)MAX_HITPOINTS;
+		if(MoreMath.CheckOccurence(bleed_freq)) {
+			float r = 0.01f * (float)(MAX_HITPOINTS - hitpoints);
+			Globals.DecalManager.CreateBlood(transform.position, r);
+		}
 	}
 	
 	bool isFleeing() {
@@ -103,16 +109,19 @@ public class Person : MonoBehaviour {
 		if(distToTarget > TARGET_HIT_RANGE) {
 			return false;
 		}
+		int dmg = 0;
 		if(faction == FACTION_REBEL) {
-			target.hitpoints -= 2;
+			dmg = 2;
 		}
 		else if(faction == FACTION_POLICE) {
-			target.hitpoints -= 4;
+			dmg = 4;
 		}
 		else {
-			target.hitpoints -= 1;
+			dmg = 1;
 		}
+		target.hitpoints -= dmg;
 		audio.PlayOneShot(Globals.People.RandomHitAudio);
+		Globals.DecalManager.CreateBlood(transform.position, 0.03f*(float)dmg);
 		attackCooldown = Random.Range(1.2f, 1.9f);
 		return true;
 	}

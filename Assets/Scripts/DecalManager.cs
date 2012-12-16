@@ -7,6 +7,8 @@ public class DecalManager : MonoBehaviour {
 
 	List<GameObject> decals = new List<GameObject>();
 
+	public GameObject prefabDecalBlood;
+
 	public GameObject prefabDecalEnv;
 
 	public GameObject prefabDecalNewIndividum;
@@ -19,36 +21,18 @@ public class DecalManager : MonoBehaviour {
 		x.name = prefix + "_" + System.String.Format("{0:D5}", decalId++);
 	}
 
-	public void CreateEnv(Transform follow, float radius, Color color, float wobbelRadius=0.0f, float height=1.0f) {
-		GameObject x = (GameObject)Instantiate(prefabDecalEnv);
-		add(x, "env");
+	public void CreateBlood(Vector3 position, float radius) {
+		GameObject x = (GameObject)Instantiate(prefabDecalBlood);
+		add(x, "blood");
 		Decal decal = x.GetComponent<Decal>();
-		decal.Color = new Color(color.r, color.g, color.b, 0.0f);
-		decal.wobbelRadius = wobbelRadius;
-		decal.follow = follow;
-		decal.fixedZ = -height;
-		x.transform.localScale = radius * Vector3.one;
+		//decal.Color = new Color(1.0f, color.g, color.b, 0.0f);
+		//decal.wobbelRadius = wobbelRadius;
+		//decal.follow = null;
+		decal.transform.position = position;
+		//decal.fixedZ = height;
+		decal.transform.localScale = radius * Vector3.one;
 	}
 
-	public void CreateNewIndividum(Transform follow, float radius, float height=0.1f) {
-		GameObject x = (GameObject)Instantiate(prefabDecalNewIndividum);
-		add(x, "ringI");
-		Decal decal = x.GetComponent<Decal>();
-		decal.wobbelRadius = 0.0f;
-		decal.follow = follow;
-		decal.fixedZ = -height;
-		x.transform.localScale = radius * Vector3.one;
-	}
-
-	public void CreateNewSpecies(Transform follow, float radius, float height=0.1f) {
-		GameObject x = (GameObject)Instantiate(prefabDecalNewSpecies);
-		add(x, "ringS");
-		Decal decal = x.GetComponent<Decal>();
-		decal.wobbelRadius = 0.0f;
-		decal.follow = follow;
-		decal.fixedZ = -height;
-		x.transform.localScale = radius * Vector3.one;
-	}
 
 	void Awake() {
 		Globals.DecalManager = this;

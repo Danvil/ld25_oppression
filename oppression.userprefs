@@ -12,10 +12,10 @@
       <File FileName="Assets\Scripts\Globals.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\PeopleManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Camera.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Person.cs" Line="107" Column="25" />
+      <File FileName="Assets\Scripts\Person.cs" Line="116" Column="60" />
       <File FileName="Assets\Scripts\Police.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Decal.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\DecalManager.cs" Line="22" Column="87" />
+      <File FileName="Assets\Scripts\Decal.cs" Line="38" Column="6" />
+      <File FileName="Assets\Scripts\DecalManager.cs" Line="24" Column="70" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

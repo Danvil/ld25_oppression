@@ -16,7 +16,9 @@ public class Decal : MonoBehaviour {
 
 	public Transform follow = null;
 
-	public float fixedZ;
+	public float fixedZ = 0.01f;
+	
+	public float alphaBase = 1.0f;
 
 	Vector3 wobbelCurrent;
 	Vector3 wobbelTarget;
@@ -30,9 +32,10 @@ public class Decal : MonoBehaviour {
 
 	public float Alpha {
 		get {
-			return renderer.material.GetColor("_TintColor").a;
+			return this.GetComponentInChildren<MeshRenderer>().material.GetColor("_TintColor").a;
 		}
 		set {
+			var renderer = this.GetComponentInChildren<MeshRenderer>();
 			Color col = renderer.material.GetColor("_TintColor");
 			col.a = value;
 			renderer.material.SetColor("_TintColor", col);
@@ -60,13 +63,13 @@ public class Decal : MonoBehaviour {
 		timeleft -= MyTime.deltaTime;
 		switch(fadeMode) {
 			case FadeMode.Constant:
-				Alpha = 0.25f;
+				Alpha = alphaBase;
 				break;
 			case FadeMode.FadeInOut:
-				Alpha = 0.25f * MoreMath.Parabel(timeleft, lifetime*0.5f, 1.0f, 0.0f, 0.0f);
+				Alpha = alphaBase * MoreMath.Parabel(timeleft, lifetime*0.5f, 1.0f, 0.0f, 0.0f);
 				break;
 			case FadeMode.FadeOut:
-				Alpha = 0.25f * MoreMath.Parabel(timeleft, lifetime, 1.0f, 0.0f, 0.0f);
+				Alpha = alphaBase * MoreMath.Parabel(timeleft, lifetime, 1.0f, 0.0f, 0.0f);
 				break;
 		}
 		// following
@@ -90,7 +93,7 @@ public class Decal : MonoBehaviour {
 		}
 		// set fixed z (C# ftw!)
 		Vector3 pTmp = this.transform.position;
-		pTmp.z = fixedZ;
+		pTmp.y = fixedZ;
 		this.transform.position = pTmp;
 	}
 }
