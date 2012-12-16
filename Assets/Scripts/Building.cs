@@ -91,11 +91,11 @@ public class Building : MonoBehaviour {
 		markerNeutral.SetActive(true);
 		markerRebels = (GameObject)Instantiate(pfMarkerRebels);
 		markerRebels.transform.parent = this.transform;
-		markerRebels.transform.localPosition = new Vector3(0.5f,1,0.5f);
+		markerRebels.transform.localPosition = new Vector3(0.5f,1.01f,0.5f);
 		markerRebels.SetActive(false);
 		markerPolice = (GameObject)Instantiate(pfMarkerRebels);
 		markerPolice.transform.parent = this.transform;
-		markerPolice.transform.localPosition = new Vector3(0.5f,1,0.5f);
+		markerPolice.transform.localPosition = new Vector3(0.5f,1.01f,0.5f);
 		markerPolice.SetActive(false);
 	}
 	
@@ -140,7 +140,6 @@ public class Building : MonoBehaviour {
 			}
 		}
 		
-		markerNeutral.SetActive(faction == Faction.Neutral);
 		markerRebels.SetActive(faction == Faction.Rebel);
 		markerPolice.SetActive(faction == Faction.Police);
 		

@@ -63,6 +63,7 @@
      <Compile Include="Assets\Scripts\Rebel.cs" />
      <Compile Include="Assets\Scripts\Squad.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
+     <Compile Include="Assets\Scripts\Tools.cs" />
      <None Include="Assets\MoreLinq.xml" />
  <Reference Include="MoreLinq">
  <HintPath>Assets\MoreLinq.dll</HintPath>

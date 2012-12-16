@@ -8,7 +8,7 @@ public class Person : MonoBehaviour {
 	const float SPEED_NORMAL = 0.12f;
 	const float SPEED_FAST = 0.27f;
 	const float RADIUS = 0.04f;
-	const float PERSON_LOOK_RADIUS = 0.50f;
+	const float PERSON_LOOK_RADIUS = 0.80f;
 	const float AVOID_OTHER_STRENGTH = 0.2f;
 	const float AVOID_LEVEL_STRENGTH = 1.3f;
 	const float TARGET_HIT_RANGE = 0.1f;
@@ -18,7 +18,7 @@ public class Person : MonoBehaviour {
 	const float ROTATION_MIX_STRENGTH = 0.3f;
 	const float VELOCITY_MIX_STRENGTH = 0.10f;
 	const float ATTACK_COOLDOWN = 1.6f;
-	const float UPDATE_IN_RANGE_COOLDOWN = 0.6f;
+	const float UPDATE_IN_RANGE_COOLDOWN = 0.497f;
 	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
@@ -30,7 +30,6 @@ public class Person : MonoBehaviour {
 	public int HitpointsCurrent { get; private set; }
 	public List<Building> BuildingsInRange { get; private set; }
 	public List<Person> PersonsInRange { get; private set; }
-	public Person ClosestEnemy { get; private set; }
 	public int ThreatLevel { get; private set; }
 	public Vector3 Velocity { get; private set; }
 	public bool IsDead { get; private set; }
@@ -51,6 +50,7 @@ public class Person : MonoBehaviour {
 			return;
 		gameObject.AddComponent<Squad>();
 		Squad = GetComponent<Squad>();
+		Squad.Leader = this;
 		Squad.Add(this);
 		IsSquadLeader = true;
 		squadMarker = (GameObject)Instantiate(faction == Faction.Police ? pfMarkerPolice : pfMarkerRebels);
@@ -60,8 +60,8 @@ public class Person : MonoBehaviour {
 		squadMarker.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
 	}
 	
-	Person murderer;	
-	float attackCooldown;
+	Person murderer = null;	
+	float attackCooldown = 0.0f;
 	RandomGoalPicker randomGoalPicker;
 	float updateInRangeCooldown = 0.0f;
 	
@@ -71,24 +71,26 @@ public class Person : MonoBehaviour {
 	}		
 	
 	// Use this for initialization
-	void Start () {
+	void Start () {	
 		HitpointsCurrent = hitpointsMax;
 		
 		PersonsInRange = new List<Person>();
-		ClosestEnemy = null;
+		BuildingsInRange = new List<Building>();
 		ThreatLevel = 0;
 		Velocity = Vector3.zero;
 		IsDead = false;
 		DeathTime = 0.0f;
 	
-		randomGoalPicker = GetComponent<RandomGoalPicker>();
-		SetEnableRandomGoals(false);
-
 		FollowTarget = null;
 		IsFleeing = false;
 		AttackTarget = null;
 		AdditionalForces = new List<Vector3>();
 		IsFast = false;
+		
+		randomGoalPicker = GetComponent<RandomGoalPicker>();
+		SetEnableRandomGoals(false);
+		updateInRangeCooldown = Random.Range(0.0f, UPDATE_IN_RANGE_COOLDOWN);
+
 	}
 	
 	// Update is called once per frame
@@ -99,6 +101,10 @@ public class Person : MonoBehaviour {
 			// update in range not every frame
 			BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();	
 			updatePersonsInRange();
+		}
+		else {
+			// purge dead
+			PersonsInRange = (from x in PersonsInRange where !x.IsDead select x).ToList();
 		}
 		
 		// bleeding
@@ -155,7 +161,7 @@ public class Person : MonoBehaviour {
 			}
 		}
 		audio.PlayOneShot(Globals.People.RandomHitAudio);
-		Globals.DecalManager.CreateBlood(transform.position, 0.03f*(float)damage);
+		Globals.DecalManager.CreateBlood(AttackTarget.transform.position, 0.03f*(float)damage);
 		attackCooldown = ATTACK_COOLDOWN + Random.Range(-0.3f, +0.3f);
 		return true;
 	}
@@ -207,23 +213,24 @@ public class Person : MonoBehaviour {
 		}
 	}
 	
+	bool isThreat(Faction f) {
+		switch(this.faction) {
+		default: case Faction.Neutral: return f != Faction.Neutral;
+		case Faction.Rebel: return f == Faction.Police;
+		case Faction.Police: return f == Faction.Rebel;
+		}
+	}
+	
 	void updatePersonsInRange() {
 		this.PersonsInRange = Globals.People.GetInRange(this, PERSON_LOOK_RADIUS).ToList();
-		this.ClosestEnemy = null;
 		int cnt_total = 0;
 		int cnt_balance = 0;
-		float closest_dist = 1000.0f;
 		foreach(Person x in this.PersonsInRange) {
 			if(x.IsDead)
 				continue;
 			cnt_total ++;
-			if(x.faction != faction) {
+			if(isThreat(x.faction)) {
 				cnt_balance --;
-				float dist = (x.transform.position - this.transform.position).magnitude;
-				if(dist < closest_dist) {
-					closest_dist = dist;
-					this.ClosestEnemy = x;
-				}
 			}
 			else {
 				cnt_balance ++;

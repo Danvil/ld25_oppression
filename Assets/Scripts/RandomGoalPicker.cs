@@ -20,15 +20,16 @@ public class RandomGoalPicker : MonoBehaviour
 	void setNewGoal() {
 		for(int i=0; i<3; i++) {
 			// create new random goal
-			Vector3 ngoal = MoreMath.RandomInsideBox(Globals.City.SizeMin, Globals.City.SizeMax);
+			Vector3 ngoal = this.transform.position + MoreMath.RandomInsideBox(new Vector3(-1,0,-1), new Vector3(+1,0,+1));
+				//MoreMath.RandomInsideBox(Globals.City.SizeMin, Globals.City.SizeMax);
 			// check if goal is reachable
 			if(!Globals.City.IsBlocked(ngoal)) {
 				Goal = ngoal;
+				goalFollowTime = Random.Range(3.0f, 5.0f);
 				break;
 			}
 		}
 		goalWaitTime = Random.Range(0.0f, 2.0f);
-		goalFollowTime = Random.Range(3.0f, 5.0f);
 	}
 	
 	void Start() {

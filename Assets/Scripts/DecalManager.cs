@@ -28,7 +28,7 @@ public class DecalManager : MonoBehaviour {
 		//decal.Color = new Color(1.0f, color.g, color.b, 0.0f);
 		//decal.wobbelRadius = wobbelRadius;
 		//decal.follow = null;
-		decal.transform.position = position + new Vector3(0,Random.Range(-0.001f,+0.001f),0);
+		decal.transform.position = position + new Vector3(0,Random.Range(-0.0009f,+0.0009f),0);
 		//decal.fixedZ = height;
 		decal.transform.localScale = radius * Vector3.one;
 	}
