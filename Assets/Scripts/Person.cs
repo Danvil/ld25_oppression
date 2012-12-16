@@ -10,10 +10,11 @@ public class Person : MonoBehaviour {
 	const float RADIUS = 0.04f;
 	const float PERSON_LOOK_RADIUS = 0.50f;
 	const float AVOID_STRENGTH = 0.1f;
+	const float AVOID_LEVEL_STRENGTH = 3.0f;
 	const float TARGET_HIT_RANGE = 0.1f;
 	const float DEATH_COOLDOWN = 10.0f;
 	const float DEATH_FALLTIME = 0.7f;
-	const float DEATH_WITNESS_RANGE = 2.0f;
+	const float BUILDING_RANGE = 5.0f;
 	const float ROTATION_MIX_STRENGTH = 0.3f;
 	const float VELOCITY_MIX_STRENGTH = 0.04f;
 	
@@ -25,6 +26,7 @@ public class Person : MonoBehaviour {
 	public Faction faction;
 	
 	public int HitpointsCurrent { get; private set; }
+	public List<Building> BuildingsInRange { get; private set; }
 	public List<Person> PersonsInRange { get; private set; }
 	public Person ClosestEnemy { get; private set; }
 	public int ThreatLevel { get; private set; }
@@ -85,6 +87,8 @@ public class Person : MonoBehaviour {
 		if(randomGoalPicker)
 			randomGoalPicker.IsEnabled = (!FollowTarget && !IsFleeing);
 		
+		BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();
+		
 		// get persons in range
 		updatePersonsInRange();
 		
@@ -117,7 +121,7 @@ public class Person : MonoBehaviour {
 	void die() {
 		audio.PlayOneShot(Globals.People.RandomDeathAudio);
 		isDead = true;
-		foreach(Building b in Globals.City.GetBuildingsInRange(transform.position, DEATH_WITNESS_RANGE)) {
+		foreach(Building b in BuildingsInRange) {
 			b.WitnessDeath(faction, murderer.faction);
 		}
 	}
@@ -147,7 +151,7 @@ public class Person : MonoBehaviour {
 	
 	void move() {
 		Vector3 moveLevel = computeAvoidLevel();
-		Debug.DrawRay(this.transform.position, 2.0f*moveLevel, Color.blue);
+		Debug.DrawRay(this.transform.position, moveLevel, Color.blue);
 		
 		Vector3 moveAvoid = computeAvoidOther();
 		Debug.DrawRay(this.transform.position, 2.0f*moveAvoid, Color.yellow);
@@ -156,7 +160,7 @@ public class Person : MonoBehaviour {
 		Debug.DrawRay(this.transform.position, 2.0f*moveFollow, Color.red);
 
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
-		Debug.DrawRay(this.transform.position, 2.0f*moveRndGoal, Color.green);
+		Debug.DrawRay(this.transform.position, moveRndGoal, Color.green);
 		
 		Vector3 moveOther = Vector3.zero;
 		foreach(Vector3 v in AdditionalForces) {
@@ -245,7 +249,13 @@ public class Person : MonoBehaviour {
 	}
 	
 	Vector3 computeAvoidLevel() {
-		return new Vector3(0,0,0);
+		Vector3 force = Vector3.zero;
+		float d_min = 2.0f * RADIUS;
+		foreach(Building b in BuildingsInRange) {
+			Vector3 h = b.Distance(this.transform.position);
+			force += AVOID_LEVEL_STRENGTH * avoidFalloff(h.magnitude, d_min) * h.normalized;
+		}
+		return force;
 	}
 	
 }

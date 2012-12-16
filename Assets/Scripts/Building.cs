@@ -13,7 +13,7 @@ public class Building : MonoBehaviour {
 	const float SUPPORT_CHANGE_X_XkN = -10.0f;
 	const float SUPPORT_CHANGE_X_YkX = 15.0f;
 	const float SUPPORT_CHANGE_X_XkY = 5.0f;
-	const float GENERATE_RATE = 0.05f;
+	const float GENERATE_RATE = 0.03f;
 	const float GENERATE_SIGMA = 30.0f;
 	const float GENERATE_RANGE = 60.0f;
 	
@@ -139,5 +139,39 @@ public class Building : MonoBehaviour {
 		return gates[Random.Range(0, gates.Count - 1)];
 	}
 	
-
+	Vector3 OrthogonalRightDistance(Vector3 a, Vector3 b, Vector3 x) {
+		Vector3 x0 = x - a;
+		Vector3 n = (b - a).normalized;
+		float q = Vector3.Dot(n, x0);
+		Vector3 h = x0 - q*n;
+		if(q < 0) {
+			return x - a;
+		}
+		if(q > 1) {
+			return x - b;
+		}
+		float s = Vector3.Dot(new Vector3(0,1,0), Vector3.Cross(n, h));
+		if(s < 0) {
+			return 100.0f * Vector3.one;
+		}
+		return h;
+	}
+	
+	public Vector3 Distance(Vector3 x) {
+		Vector3 x0 = x - this.transform.position;
+		Vector3 h1 = OrthogonalRightDistance(new Vector3(0,0,0), new Vector3(1,0,0), x0);
+		Vector3 h2 = OrthogonalRightDistance(new Vector3(1,0,0), new Vector3(1,0,1), x0);
+		Vector3 h3 = OrthogonalRightDistance(new Vector3(1,0,1), new Vector3(0,0,1), x0);
+		Vector3 h4 = OrthogonalRightDistance(new Vector3(0,0,1), new Vector3(0,0,0), x0);
+		float d1 = h1.sqrMagnitude;
+		float d2 = h2.sqrMagnitude;
+		float d3 = h3.sqrMagnitude;
+		float d4 = h4.sqrMagnitude;
+		float d = Mathf.Min(new float[] { d1, d2, d3, d4});
+		if(d == d1) return h1;
+		else if(d == d2) return h2;
+		else if(d == d3) return h3;
+		else if(d == d4) return h4;
+		else return Vector3.zero;
+	}
 }
