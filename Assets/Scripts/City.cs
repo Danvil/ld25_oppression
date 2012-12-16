@@ -28,7 +28,7 @@ public class City : MonoBehaviour {
 	public bool IsBlocked(int x, int y) {
 		if(	   x < 0 || size <= x
 			|| y < 0 || size <= y) {
-			return false;
+			return true;
 		}
 		else {
 			return occupancyLayer[x,y] == 1;
@@ -55,7 +55,7 @@ public class City : MonoBehaviour {
 			throw new Exception("Only one city allowed!");
 		}
 		Globals.City = this;
-		size = 1 + block_count*4;
+		size = 2 + 1 + block_count*4;
 		SizeMin = Vector3.zero;
 		SizeMax = new Vector3((float)size+1.0f, 0.0f, (float)size+1.0f);
 	}
@@ -78,11 +78,17 @@ public class City : MonoBehaviour {
 				occupancyLayer[i,j] = 0;
 			}
 		}
+		for(int i=0; i<size; i++) {
+			occupancyLayer[i,0] = 1;
+			occupancyLayer[i,size-1] = 1;
+			occupancyLayer[0,i] = 1;
+			occupancyLayer[size-1,i] = 1;
+		}
 		// set houses (3x3)
 		for(int i=0; i<block_count; i++) {
 			for(int j=0; j<block_count; j++) {
-				int x = 1 + j*4;
-				int y = 1 + i*4;
+				int x = 2 + j*4;
+				int y = 2 + i*4;
 				if(i==block_count/2 && j==block_count/2) {
 					// square
 				}
