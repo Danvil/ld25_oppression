@@ -18,6 +18,7 @@ public class Person : MonoBehaviour {
 	const float ROTATION_MIX_STRENGTH = 0.3f;
 	const float VELOCITY_MIX_STRENGTH = 0.10f;
 	const float ATTACK_COOLDOWN = 1.6f;
+	const float UPDATE_IN_RANGE_COOLDOWN = 0.6f;
 	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
@@ -62,6 +63,7 @@ public class Person : MonoBehaviour {
 	Person murderer;	
 	float attackCooldown;
 	RandomGoalPicker randomGoalPicker;
+	float updateInRangeCooldown = 0.0f;
 	
 	public void SetEnableRandomGoals(bool q) {
 		if(randomGoalPicker)
@@ -91,10 +93,13 @@ public class Person : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();
-		
-		// get persons in range
-		updatePersonsInRange();
+		updateInRangeCooldown -= MyTime.deltaTime;
+		if(updateInRangeCooldown < 0.0f) {
+			updateInRangeCooldown = UPDATE_IN_RANGE_COOLDOWN;
+			// update in range not every frame
+			BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();	
+			updatePersonsInRange();
+		}
 		
 		// bleeding
 		HitpointsCurrent = MoreMath.Clamp(HitpointsCurrent, 0, hitpointsMax);

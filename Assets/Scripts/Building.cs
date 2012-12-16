@@ -17,6 +17,7 @@ public class Building : MonoBehaviour {
 	const float GENERATE_SIGMA = 30.0f;
 	const float GENERATE_RANGE = 60.0f;
 	
+	public GameObject pfMarkerNeutral;
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
 	
@@ -72,6 +73,7 @@ public class Building : MonoBehaviour {
 		}
 	}
 	
+	GameObject markerNeutral;
 	GameObject markerRebels;
 	GameObject markerPolice;
 
@@ -83,13 +85,17 @@ public class Building : MonoBehaviour {
 				gates.Add(pnt);
 			}
 		}
+		markerNeutral = (GameObject)Instantiate(pfMarkerNeutral);
+		markerNeutral.transform.parent = this.transform;
+		markerNeutral.transform.localPosition = new Vector3(0,0,0);
+		markerNeutral.SetActive(true);
 		markerRebels = (GameObject)Instantiate(pfMarkerRebels);
-		markerRebels.transform.Translate(new Vector3(0,1,0));
 		markerRebels.transform.parent = this.transform;
+		markerRebels.transform.localPosition = new Vector3(0.5f,1,0.5f);
 		markerRebels.SetActive(false);
 		markerPolice = (GameObject)Instantiate(pfMarkerRebels);
-		markerPolice.transform.Translate(new Vector3(0,1,0));
 		markerPolice.transform.parent = this.transform;
+		markerPolice.transform.localPosition = new Vector3(0.5f,1,0.5f);
 		markerPolice.SetActive(false);
 	}
 	
@@ -97,6 +103,7 @@ public class Building : MonoBehaviour {
 	void Update () {
 		foreach(Vector3 q in gates)
 			Debug.DrawLine(this.transform.position + new Vector3(0.5f,0,0.5f), q, Color.white);	
+		
 		// adapt faction support
 		factionSupport -= Mathf.Sign(factionSupport) * MyTime.deltaTime * SUPPORT_DECREASE_RATE;
 		if(faction == Faction.Neutral) {
@@ -117,8 +124,7 @@ public class Building : MonoBehaviour {
 				faction = Faction.Neutral;
 			}
 		}
-		markerRebels.SetActive(faction == Faction.Rebel);
-		markerPolice.SetActive(faction == Faction.Police);
+
 		// generate
 		if(gates.Count > 0 && MoreMath.CheckOccurence(GENERATE_RATE)) {
 			float v = MoreMath.RandomNormalDist(factionSupport, GENERATE_SIGMA);
@@ -133,6 +139,16 @@ public class Building : MonoBehaviour {
 				Globals.People.Generate(Faction.Neutral, p);
 			}
 		}
+		
+		markerNeutral.SetActive(faction == Faction.Neutral);
+		markerRebels.SetActive(faction == Faction.Rebel);
+		markerPolice.SetActive(faction == Faction.Police);
+		
+		float color_q = 0.5f * factionSupport / SUPPORT_SWITCH;
+		Color color = new Color(0.5f - color_q, 0.5f - Mathf.Abs(color_q), 0.5f + color_q);
+		var mat = markerNeutral.GetComponentInChildren<MeshRenderer>().material;
+		mat.color = color;
+		mat.SetColor("_Diffuse", color);
 	}
 	
 	Vector3 GetRandomGatePosition() {
