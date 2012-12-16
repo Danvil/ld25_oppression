@@ -29,6 +29,7 @@ public class PeopleManager : MonoBehaviour {
 		}
 	}
 	
+	public GameObject pfNeutral;
 	public GameObject pfRebel;
 	public GameObject pfPolice;
 	
@@ -71,22 +72,31 @@ public class PeopleManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		Vector3 centerRebel = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,0);
-		for(int i=0; i<50; i++) {
+		Vector3 centerRebel = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,1);
+		for(int i=0; i<30; i++) {
 			GameObject x = (GameObject)Instantiate(pfRebel);		
 			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerRebel;
 			x.transform.parent = this.transform;
 			Person p = x.GetComponent<Person>();
-			p.faction = Person.FACTION_REBEL;
+			p.faction = Faction.Rebel;
 			Add(p);
 		}
-		Vector3 centerPolice = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) - new Vector3(0,0,2);
+		Vector3 centerNeutral = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(-2,0,-.5f);
 		for(int i=0; i<50; i++) {
+			GameObject x = (GameObject)Instantiate(pfNeutral);		
+			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerNeutral;
+			x.transform.parent = this.transform;
+			Person p = x.GetComponent<Person>();
+			p.faction = Faction.Neutral;
+			Add(p);
+		}
+		Vector3 centerPolice = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,-2);
+		for(int i=0; i<30; i++) {
 			GameObject x = (GameObject)Instantiate(pfPolice);		
 			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerPolice;
 			x.transform.parent = this.transform;
 			Person p = x.GetComponent<Person>();
-			p.faction = Person.FACTION_POLICE;
+			p.faction = Faction.Police;
 			Add(p);
 		}
 	}

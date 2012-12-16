@@ -50,9 +50,11 @@
      <Compile Include="Assets\Scripts\City.cs" />
      <Compile Include="Assets\Scripts\Decal.cs" />
      <Compile Include="Assets\Scripts\DecalManager.cs" />
+     <Compile Include="Assets\Scripts\Faction.cs" />
      <Compile Include="Assets\Scripts\Globals.cs" />
      <Compile Include="Assets\Scripts\MoreMath.cs" />
      <Compile Include="Assets\Scripts\MyTime.cs" />
+     <Compile Include="Assets\Scripts\Neutral.cs" />
      <Compile Include="Assets\Scripts\PeopleManager.cs" />
      <Compile Include="Assets\Scripts\Person.cs" />
      <Compile Include="Assets\Scripts\Police.cs" />

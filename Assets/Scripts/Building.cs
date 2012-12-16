@@ -10,6 +10,8 @@ public class Building : MonoBehaviour {
 	public Vector3[] rawGates;
 
 	List<Vector3> gates = new List<Vector3>();
+	
+	public int faction;
 
 	// Use this for initialization
 	void Start () {

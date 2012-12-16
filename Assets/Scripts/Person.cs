@@ -31,12 +31,9 @@ public class Person : MonoBehaviour {
 	
 	bool isStatic;
 	
-	public int faction;
+	public Faction faction;
 	
 	public int thread_level;
-	
-	public const int FACTION_REBEL = 0;
-	public const int FACTION_POLICE = 1;
 	
 	// Use this for initialization
 	void Start () {
@@ -98,7 +95,7 @@ public class Person : MonoBehaviour {
 	}
 	
 	bool isFleeing() {
-		return faction != FACTION_POLICE && hitpoints <= 3;
+		return faction != Faction.Police && (hitpoints <= 3 || thread_level <= -3);
 	}
 	
 	bool attack() {
@@ -113,10 +110,10 @@ public class Person : MonoBehaviour {
 			return false;
 		}
 		int dmg = 0;
-		if(faction == FACTION_REBEL) {
+		if(faction == Faction.Rebel) {
 			dmg = 2;
 		}
-		else if(faction == FACTION_POLICE) {
+		else if(faction == Faction.Police) {
 			dmg = 4;
 		}
 		else {
@@ -194,10 +191,13 @@ public class Person : MonoBehaviour {
 				cnt_balance ++;
 			}
 		}
-		if(cnt_balance > 2 && closest_target) {
+		thread_level = cnt_balance;
+		if(faction != Faction.Neutral && thread_level >= 3 && closest_target) {
 			target = closest_target;
 		}
-		thread_level = cnt_balance;
+		else {
+			target = null;
+		}
 	}
 	
 	void setNewGoal() {
