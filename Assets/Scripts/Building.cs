@@ -13,9 +13,10 @@ public class Building : MonoBehaviour {
 	const float SUPPORT_CHANGE_X_XkN = -10.0f;
 	const float SUPPORT_CHANGE_X_YkX = 15.0f;
 	const float SUPPORT_CHANGE_X_XkY = 5.0f;
-	const float GENERATE_RATE = 0.03f;
-	const float GENERATE_SIGMA = 30.0f;
-	const float GENERATE_RANGE = 60.0f;
+	const float GENERATE_RATE = 0.01f;
+	const float GENERATE_RATE_SUPPORT = 0.001f;
+	const float GENERATE_SIGMA = 25.0f;
+	const float GENERATE_RANGE = 50.0f;
 	
 	public GameObject pfMarkerNeutral;
 	public GameObject pfMarkerPolice;
@@ -27,6 +28,8 @@ public class Building : MonoBehaviour {
 	
 	public float factionSupport = 0.0f;
 	Faction faction = Faction.Neutral;
+	
+	float lastDecalSupport = 0.0f;
 	
 	public void WitnessDeath(Faction victim, Faction murderer) {
 		if(faction == Faction.Neutral) {
@@ -126,7 +129,8 @@ public class Building : MonoBehaviour {
 		}
 
 		// generate
-		if(gates.Count > 0 && MoreMath.CheckOccurence(GENERATE_RATE)) {
+		float generate_rate = GENERATE_RATE + Mathf.Abs(factionSupport) * GENERATE_RATE_SUPPORT;
+		if(gates.Count > 0 && MoreMath.CheckOccurence(generate_rate)) {
 			float v = MoreMath.RandomNormalDist(factionSupport, GENERATE_SIGMA);
 			Vector3 p = GetRandomGatePosition() + 0.05f*MoreMath.RandomInsideUnitCircleXZ;
 			if(v <= -GENERATE_RANGE) {
@@ -148,6 +152,16 @@ public class Building : MonoBehaviour {
 		var mat = markerNeutral.GetComponentInChildren<MeshRenderer>().material;
 		mat.color = color;
 		mat.SetColor("_Diffuse", color);
+		
+		if(Mathf.Abs(factionSupport - lastDecalSupport) > 10.0f) {
+			if(factionSupport > lastDecalSupport) {
+				Globals.DecalManager.CreatePlus(this.transform.position);
+			}
+			else {
+				Globals.DecalManager.CreateMinus(this.transform.position);
+			}
+			lastDecalSupport = factionSupport;
+		}
 	}
 	
 	Vector3 GetRandomGatePosition() {

@@ -9,11 +9,9 @@ public class DecalManager : MonoBehaviour {
 
 	public GameObject prefabDecalBlood;
 
-	public GameObject prefabDecalEnv;
+	public GameObject prefabDecalPlus;
 
-	public GameObject prefabDecalNewIndividum;
-
-	public GameObject prefabDecalNewSpecies;
+	public GameObject prefabDecalMinus;
 
 	void add(GameObject x, string prefix) {
 		decals.Add(x);
@@ -22,6 +20,7 @@ public class DecalManager : MonoBehaviour {
 	}
 
 	public void CreateBlood(Vector3 position, float radius) {
+		return;
 		GameObject x = (GameObject)Instantiate(prefabDecalBlood);
 		add(x, "blood");
 		Decal decal = x.GetComponent<Decal>();
@@ -33,6 +32,19 @@ public class DecalManager : MonoBehaviour {
 		decal.transform.localScale = radius * Vector3.one;
 	}
 
+	public void CreatePlus(Vector3 position) {
+		GameObject x = (GameObject)Instantiate(prefabDecalPlus);
+		add(x, "plus");
+		Decal decal = x.GetComponent<Decal>();
+		decal.transform.localPosition = position;
+	}
+
+	public void CreateMinus(Vector3 position) {
+		GameObject x = (GameObject)Instantiate(prefabDecalMinus);
+		add(x, "minus");
+		Decal decal = x.GetComponent<Decal>();
+		decal.transform.localPosition = position;
+	}
 
 	void Awake() {
 		Globals.DecalManager = this;

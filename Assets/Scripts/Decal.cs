@@ -15,10 +15,10 @@ public class Decal : MonoBehaviour {
 	public float wobbelRadius = 0.0f;
 
 	public Transform follow = null;
-
-	public float fixedZ = Random.Range(-0.001f, +0.001f);
 	
 	public float alphaBase = 1.0f;
+	
+	public Vector3 velocity = Vector3.zero;
 
 	Vector3 wobbelCurrent;
 	Vector3 wobbelTarget;
@@ -53,10 +53,6 @@ public class Decal : MonoBehaviour {
 		wobbelTarget = wobbelCurrent;
 		timeleft = lifetime;
 	}
-	
-	float alphaFromTimeleft() {
-		return 0.25f * MoreMath.Parabel(timeleft, lifetime*0.5f, 1.0f, 0.0f, 0.0f);
-	}
 
 	// Update is called once per frame
 	void Update () {
@@ -72,13 +68,13 @@ public class Decal : MonoBehaviour {
 				Alpha = alphaBase * MoreMath.Parabel(timeleft, lifetime, 1.0f, 0.0f, 0.0f);
 				break;
 		}
+		
 		// following
 		if(follow) {
 			this.transform.position = follow.position;
+			return;
 		}
-		else {
-			return; // do not move anymore
-		}
+		
 		// wobbeling
 		if(wobbelRadius > 0.0f) {
 			Vector3 d = wobbelTarget - wobbelCurrent;
@@ -91,9 +87,8 @@ public class Decal : MonoBehaviour {
 			}
 			this.transform.position += wobbelCurrent;
 		}
-		// set fixed z (C# ftw!)
-		Vector3 pTmp = this.transform.position;
-		pTmp.y = fixedZ;
-		this.transform.position = pTmp;
+		
+		this.transform.position += MyTime.deltaTime * velocity;
+
 	}
 }
