@@ -77,7 +77,6 @@ public class PeopleManager : MonoBehaviour {
 		x.transform.position = position;
 		x.transform.parent = this.transform;
 		Person p = x.GetComponent<Person>();
-		p.faction = faction;
 		Add(p);
 	}
 

@@ -120,7 +120,7 @@ public class Building : MonoBehaviour {
 		// generate
 		if(gates.Count > 0 && MoreMath.CheckOccurence(GENERATE_RATE)) {
 			float v = MoreMath.RandomNormalDist(factionSupport, GENERATE_SIGMA);
-			Vector3 p = GetRandomGatePosition();
+			Vector3 p = GetRandomGatePosition() + 0.05f*MoreMath.RandomInsideUnitCircleXZ;
 			if(v <= -GENERATE_RANGE) {
 				Globals.People.Generate(Faction.Rebel, p);
 			}
