@@ -11,6 +11,8 @@ public class Globals : MonoBehaviour {
 	
 	public static DecalManager DecalManager;
 	
+	public static Commander Commander;
+	
 	void Awake() {
 		MainCamera = GameObject.Find("Camera").GetComponent<Camera>();
 	}

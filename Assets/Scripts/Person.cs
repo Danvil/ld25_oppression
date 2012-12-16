@@ -8,7 +8,7 @@ public class Person : MonoBehaviour {
 	const float SPEED_NORMAL = 0.12f;
 	const float SPEED_FAST = 0.27f;
 	const float RADIUS = 0.04f;
-	const float PERSON_LOOK_RADIUS = 0.80f;
+	const float PERSON_LOOK_RADIUS = 0.65f;
 	const float AVOID_OTHER_STRENGTH = 0.2f;
 	const float AVOID_LEVEL_STRENGTH = 1.3f;
 	const float TARGET_HIT_RANGE = 0.1f;
@@ -18,7 +18,7 @@ public class Person : MonoBehaviour {
 	const float ROTATION_MIX_STRENGTH = 0.3f;
 	const float VELOCITY_MIX_STRENGTH = 0.10f;
 	const float ATTACK_COOLDOWN = 1.6f;
-	const float UPDATE_IN_RANGE_COOLDOWN = 0.497f;
+	const float UPDATE_IN_RANGE_COOLDOWN = 0.597f;
 	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;

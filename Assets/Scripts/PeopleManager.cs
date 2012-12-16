@@ -99,19 +99,19 @@ public class PeopleManager : MonoBehaviour {
 		
 		Person rebelSquad = Generate(Faction.Rebel, MoreMath.RandomInsideUnitCircleXZ + centerRebel);
 		rebelSquad.MakeSquad();
-		Person policeSquad = Generate(Faction.Police, MoreMath.RandomInsideUnitCircleXZ + centerPolice); 
-		policeSquad.MakeSquad();
+
+		Globals.Commander.Myself.MakeSquad();
 		
-		for(int i=0; i<30; i++) {
+		for(int i=0; i<20; i++) {
 			Person x = Generate(Faction.Rebel, MoreMath.RandomInsideUnitCircleXZ + centerRebel);
 			rebelSquad.Squad.Add(x);
 		}
-		for(int i=0; i<50; i++) {
+		for(int i=0; i<60; i++) {
 			Generate(Faction.Neutral, MoreMath.RandomInsideUnitCircleXZ + centerNeutral);
 		}
-		for(int i=0; i<30; i++) {
+		for(int i=0; i<40; i++) {
 			Person x = Generate(Faction.Police, MoreMath.RandomInsideUnitCircleXZ + centerPolice);
-			policeSquad.Squad.Add(x);
+			Globals.Commander.Myself.Squad.Add(x);
 		}
 	}
 	

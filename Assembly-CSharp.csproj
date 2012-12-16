@@ -46,8 +46,9 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Building.cs" />
      <Compile Include="Assets\Scripts\BuildingMesh.cs" />
-     <Compile Include="Assets\Scripts\Camera.cs" />
+     <Compile Include="Assets\Scripts\CameraControl.cs" />
      <Compile Include="Assets\Scripts\City.cs" />
+     <Compile Include="Assets\Scripts\Commander.cs" />
      <Compile Include="Assets\Scripts\Decal.cs" />
      <Compile Include="Assets\Scripts\DecalManager.cs" />
      <Compile Include="Assets\Scripts\Faction.cs" />

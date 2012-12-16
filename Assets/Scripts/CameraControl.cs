@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class Camera : MonoBehaviour {
+public class CameraControl : MonoBehaviour {
 
-	public float speed = 3.0F;
+	public float speed = 5.0f;
     
 	// Use this for initialization
 	void Start () {

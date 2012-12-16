@@ -4,7 +4,7 @@ using System.Linq;
 
 public class Police : MonoBehaviour {
 	
-	const float FAR_SQUAD_RANGE = 1.5f;
+	const float FAR_SQUAD_RANGE = 1.0f;
 	const float NEAR_SQUAD_RANGE = 0.5f;
 	
 	Person myself;
@@ -22,8 +22,9 @@ public class Police : MonoBehaviour {
 			// i am the boss!
 			myself.FollowTarget = null;
 			myself.AttackTarget = null;
-			myself.IsFast = false;
-			myself.SetEnableRandomGoals(true);
+			bool isPlayerControled = Globals.Commander.gameObject == gameObject;
+			myself.IsFast = isPlayerControled;
+			myself.SetEnableRandomGoals(!isPlayerControled);
 		}
 		else {
 			if(isReturning) {
