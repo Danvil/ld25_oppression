@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Squad : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class Squad : MonoBehaviour
 	}
 	
 	void Update() {
+		if(Leader.IsDead) {
+			members.Clear();
+		}
+		members = (from x in members where !x.IsDead select x).ToList();
 		// force
 		Vector3 swarm = Vector3.zero;
 		foreach(Person p in members) {

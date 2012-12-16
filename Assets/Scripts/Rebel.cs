@@ -13,7 +13,7 @@ public class Rebel : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(myself == myself.Squad.Leader) {
+		if(myself.Squad && myself == myself.Squad.Leader) {
 			// i am the boss!
 			var q = from x in myself.PersonsInRange where x.faction == Faction.Police && !x.IsDead && Tools.Distance(myself,x) < 0.5f select x;
 			Person enemy = Tools.GetNearest(myself, q);

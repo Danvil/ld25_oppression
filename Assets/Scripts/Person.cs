@@ -19,6 +19,7 @@ public class Person : MonoBehaviour {
 	const float VELOCITY_MIX_STRENGTH = 0.10f;
 	const float ATTACK_COOLDOWN = 1.6f;
 	const float UPDATE_IN_RANGE_COOLDOWN = 0.597f;
+	const bool RENDER_GIZMOS = true;
 	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
@@ -35,6 +36,7 @@ public class Person : MonoBehaviour {
 	public bool IsDead { get; private set; }
 	public float DeathTime { get; private set; }
 	
+	public bool IsUnmovable { get; set; }
 	public Person FollowTarget { get; set; }
 	public bool IsFleeing { get; set; }
 	public Person AttackTarget { get; set; }
@@ -81,6 +83,7 @@ public class Person : MonoBehaviour {
 		IsDead = false;
 		DeathTime = 0.0f;
 	
+		IsUnmovable = false;
 		FollowTarget = null;
 		IsFleeing = false;
 		AttackTarget = null;
@@ -168,31 +171,40 @@ public class Person : MonoBehaviour {
 	
 	void move() {
 		Vector3 moveLevel = computeAvoidLevel();
-		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
+		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
 		
 		Vector3 moveAvoid = computeAvoidOther();
-		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
+		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
 		
 		Vector3 moveFollow = computeFollow();
-		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
+		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
 
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
-		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
+		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
 		
 		Vector3 moveOther = Vector3.zero;
 		foreach(Vector3 v in AdditionalForces) {
 			moveOther += v;
 		}
 		AdditionalForces.Clear();
-		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
+		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
 		
-		Vector3 move = moveLevel + moveAvoid + moveFollow + moveRndGoal + moveOther;
+		Vector3 move = moveFollow + moveRndGoal + moveOther;
+		if(!IsUnmovable) {
+			move += moveLevel + moveAvoid;
+			// some randomness
+			move += 0.10f * MoreMath.RandomInsideUnitCircleXZ;
+		}
 		
-		// some randomness
-		move += 0.10f * MoreMath.RandomInsideUnitCircleXZ;
 		// limit max velocity
 		float speed = IsFast ? SPEED_FAST : SPEED_NORMAL;
-		move *= speed / move.magnitude;
+		float mag = move.magnitude;
+		if(mag > 0.01f) {
+			move *= speed / mag;
+		}
+		else {
+			move = Vector3.zero;
+		}
 		Velocity = MoreMath.Interpolate(Velocity, move, VELOCITY_MIX_STRENGTH);
 		Velocity = new Vector3(Velocity.x, 0.0f, Velocity.z);
 		
@@ -208,7 +220,7 @@ public class Person : MonoBehaviour {
 			transform.localRotation = MoreMath.RotAngle(-angle_final);
 		}
 		else {
-			Debug.Log("Blocked");
+			//Debug.Log("Blocked");
 			// new position is not possible
 		}
 	}

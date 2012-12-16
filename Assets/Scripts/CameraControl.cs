@@ -13,9 +13,11 @@ public class CameraControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// move camera
 		float dx = MyTime.deltaTime * speed;
 		float v = dx * Input.GetAxis("Vertical");
         float h = dx * Input.GetAxis("Horizontal");
 		this.transform.Translate(h, 0, v);
+		
 	}
 }

@@ -93,25 +93,26 @@ public class PeopleManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
+		
+		foreach(Commander c in Globals.Commanders) {
+			c.Myself.MakeSquad();
+			for(int i=0; i<30; i++) {
+				Person x = Generate(Faction.Police, c.transform.position + MoreMath.RandomInsideUnitCircleXZ);
+				c.Myself.Squad.Add(x);
+			}
+		}
+		
 		Vector3 centerRebel = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,1);
-		Vector3 centerNeutral = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(-2,0,-.5f);
-		Vector3 centerPolice = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,-2);
-		
 		Person rebelSquad = Generate(Faction.Rebel, MoreMath.RandomInsideUnitCircleXZ + centerRebel);
-		rebelSquad.MakeSquad();
-
-		Globals.Commander.Myself.MakeSquad();
-		
+		rebelSquad.MakeSquad();		
 		for(int i=0; i<20; i++) {
 			Person x = Generate(Faction.Rebel, MoreMath.RandomInsideUnitCircleXZ + centerRebel);
 			rebelSquad.Squad.Add(x);
 		}
+	
+		Vector3 centerNeutral = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(-2,0,-.5f);
 		for(int i=0; i<60; i++) {
 			Generate(Faction.Neutral, MoreMath.RandomInsideUnitCircleXZ + centerNeutral);
-		}
-		for(int i=0; i<40; i++) {
-			Person x = Generate(Faction.Police, MoreMath.RandomInsideUnitCircleXZ + centerPolice);
-			Globals.Commander.Myself.Squad.Add(x);
 		}
 	}
 	

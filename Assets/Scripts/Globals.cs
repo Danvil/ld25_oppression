@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Globals : MonoBehaviour {
 
@@ -11,7 +11,16 @@ public class Globals : MonoBehaviour {
 	
 	public static DecalManager DecalManager;
 	
-	public static Commander Commander;
+	public static List<Commander> Commanders = new List<Commander>();
+	
+	public static bool IsPlayerControled(Person x) {
+		foreach(var c in Commanders) {
+			if(x == c.Myself) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	void Awake() {
 		MainCamera = GameObject.Find("Camera").GetComponent<Camera>();

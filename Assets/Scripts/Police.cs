@@ -9,7 +9,7 @@ public class Police : MonoBehaviour {
 	
 	Person myself;
 	
-	bool isReturning = true;
+	bool isReturning = false;
 	
 	// Use this for initialization
 	void Start () {
@@ -18,11 +18,11 @@ public class Police : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(myself == myself.Squad.Leader) {
+		if(myself.Squad && myself == myself.Squad.Leader) {
 			// i am the boss!
 			myself.FollowTarget = null;
 			myself.AttackTarget = null;
-			bool isPlayerControled = Globals.Commander.gameObject == gameObject;
+			bool isPlayerControled = Globals.IsPlayerControled(myself);
 			myself.IsFast = isPlayerControled;
 			myself.SetEnableRandomGoals(!isPlayerControled);
 		}
