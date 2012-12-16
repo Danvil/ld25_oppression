@@ -16,7 +16,7 @@ public class Decal : MonoBehaviour {
 
 	public Transform follow = null;
 
-	public float fixedZ = 0.01f;
+	public float fixedZ = Random.Range(-0.001f, +0.001f);
 	
 	public float alphaBase = 1.0f;
 

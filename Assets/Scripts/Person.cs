@@ -13,8 +13,8 @@ public class Person : MonoBehaviour {
 	const float AVOID_STRENGTH_ATTACK = 0.02f;
 	const float CHECK_TARGET_RADIUS = 0.4f;
 	const float TARGET_HIT_RANGE = 0.1f;
-	const float DEATH_COOLDOWN = 5.0f;
-	const float DEATH_FALLTIME = 1.0f;
+	const float DEATH_COOLDOWN = 10.0f;
+	const float DEATH_FALLTIME = 0.7f;
 	const float ROTATION_MIX_STRENGTH =0.9f;
 	const int MAX_HITPOINTS = 10;
 	
@@ -47,6 +47,13 @@ public class Person : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		// bleeding
+		float bleed_freq = 1.0f - (float)hitpoints / (float)MAX_HITPOINTS;
+		if(MoreMath.CheckOccurence(bleed_freq)) {
+			float r = 0.01f * (float)(MAX_HITPOINTS - hitpoints);
+			Globals.DecalManager.CreateBlood(transform.position, r);
+		}
+		
 		if(isDead || hitpoints <= 0) {
 			if(!isDead) {
 				audio.PlayOneShot(Globals.People.RandomDeathAudio);
@@ -64,13 +71,14 @@ public class Person : MonoBehaviour {
 			}
 			return;
 		}
-		checkTargets();
+		
 		goalFollowTime -= MyTime.deltaTime;
 		if(goalFollowTime < 0.0f || isGoalReached() || isStatic) {
 			isStatic = true;
 			goalWaitTime -= MyTime.deltaTime;
 			if(goalWaitTime < 0.0f) {
 				setNewGoal();
+				checkTargets();	
 			}
 		}
 		else {
@@ -86,11 +94,6 @@ public class Person : MonoBehaviour {
 				}
 				if(!attack()) move();
 			}
-		}
-		float bleed_freq = 1.0f - (float)hitpoints / (float)MAX_HITPOINTS;
-		if(MoreMath.CheckOccurence(bleed_freq)) {
-			float r = 0.01f * (float)(MAX_HITPOINTS - hitpoints);
-			Globals.DecalManager.CreateBlood(transform.position, r);
 		}
 	}
 	
@@ -119,7 +122,7 @@ public class Person : MonoBehaviour {
 		else {
 			dmg = 1;
 		}
-		target.hitpoints -= dmg;
+		target.hitpoints = MoreMath.Clamp(target.hitpoints-dmg, 0, MAX_HITPOINTS);
 		audio.PlayOneShot(Globals.People.RandomHitAudio);
 		Globals.DecalManager.CreateBlood(transform.position, 0.03f*(float)dmg);
 		attackCooldown = Random.Range(1.2f, 1.9f);
@@ -174,6 +177,7 @@ public class Person : MonoBehaviour {
 		int cnt_balance = 0;
 		Person closest_target = null;
 		float closest_dist = 1000.0f;
+		target = null;
 		foreach(Person x in Globals.People.GetInRange(this, CHECK_TARGET_RADIUS)) {
 			if(x.isDead)
 				continue;

@@ -22,7 +22,7 @@ public static class MoreMath
 	}
 
 	public static int Clamp(int x, int min, int max) {
-		return (min < x ? min : (max > x ? max : x));
+		return (x < min ? min : (x > max ? max : x));
 	}
 
 	/** Computes a an integer and 0 <= b < n, such that a*n + b = i and returns b. */
