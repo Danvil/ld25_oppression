@@ -62,6 +62,10 @@
      <Compile Include="Assets\Scripts\RandomGoalPicker.cs" />
      <Compile Include="Assets\Scripts\Rebel.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
+     <None Include="Assets\MoreLinq.xml" />
+ <Reference Include="MoreLinq">
+ <HintPath>Assets\MoreLinq.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
