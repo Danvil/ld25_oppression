@@ -13,12 +13,18 @@ public class Rebel : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		myself.IsFleeing = (myself.HitpointsCurrent <= myself.hitpointsMax || myself.ThreatLevel <= -3);
-		myself.FollowTarget = myself.ClosestEnemy;
 		if(myself.ThreatLevel >= 3) {
 			myself.AttackTarget = myself.ClosestEnemy;
+			myself.FollowTarget = myself.ClosestEnemy;
 		}
 		else {
-			myself.AttackTarget = myself.ClosestEnemy;
+			myself.AttackTarget = null;
+			myself.FollowTarget = null;
 		}
+		myself.IsFast = myself.AttackTarget;
+		// random goal
+		myself.SetEnableRandomGoals(!(
+			myself.FollowTarget || myself.IsFleeing || (myself.Squad && myself.Squad.InSquadRange(myself))
+		));
 	}
 }

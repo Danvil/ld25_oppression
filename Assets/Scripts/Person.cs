@@ -5,18 +5,19 @@ using System.Linq;
 
 public class Person : MonoBehaviour {
 
-	const float SPEED_NORMAL = 0.05f;
-	const float SPEED_FAST = 0.20f;
+	const float SPEED_NORMAL = 0.12f;
+	const float SPEED_FAST = 0.27f;
 	const float RADIUS = 0.04f;
 	const float PERSON_LOOK_RADIUS = 0.50f;
-	const float AVOID_STRENGTH = 0.1f;
-	const float AVOID_LEVEL_STRENGTH = 3.0f;
+	const float AVOID_OTHER_STRENGTH = 0.2f;
+	const float AVOID_LEVEL_STRENGTH = 1.3f;
 	const float TARGET_HIT_RANGE = 0.1f;
 	const float DEATH_COOLDOWN = 10.0f;
 	const float DEATH_FALLTIME = 0.7f;
 	const float BUILDING_RANGE = 5.0f;
 	const float ROTATION_MIX_STRENGTH = 0.3f;
-	const float VELOCITY_MIX_STRENGTH = 0.04f;
+	const float VELOCITY_MIX_STRENGTH = 0.10f;
+	const float ATTACK_COOLDOWN = 1.6f;
 	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
@@ -31,6 +32,8 @@ public class Person : MonoBehaviour {
 	public Person ClosestEnemy { get; private set; }
 	public int ThreatLevel { get; private set; }
 	public Vector3 Velocity { get; private set; }
+	public bool IsDead { get; private set; }
+	public float DeathTime { get; private set; }
 	
 	public Person FollowTarget { get; set; }
 	public bool IsFleeing { get; set; }
@@ -56,11 +59,14 @@ public class Person : MonoBehaviour {
 		squadMarker.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
 	}
 	
-	bool isDead = false;
-	float deathTime = 0.0f;
 	Person murderer;	
 	float attackCooldown;
 	RandomGoalPicker randomGoalPicker;
+	
+	public void SetEnableRandomGoals(bool q) {
+		if(randomGoalPicker)
+			randomGoalPicker.IsEnabled = q;
+	}		
 	
 	// Use this for initialization
 	void Start () {
@@ -70,10 +76,11 @@ public class Person : MonoBehaviour {
 		ClosestEnemy = null;
 		ThreatLevel = 0;
 		Velocity = Vector3.zero;
-		
+		IsDead = false;
+		DeathTime = 0.0f;
+	
 		randomGoalPicker = GetComponent<RandomGoalPicker>();
-		if(randomGoalPicker)
-			randomGoalPicker.IsEnabled = true;
+		SetEnableRandomGoals(false);
 
 		FollowTarget = null;
 		IsFleeing = false;
@@ -84,9 +91,6 @@ public class Person : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(randomGoalPicker)
-			randomGoalPicker.IsEnabled = (!FollowTarget && !IsFleeing);
-		
 		BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();
 		
 		// get persons in range
@@ -100,27 +104,29 @@ public class Person : MonoBehaviour {
 			Globals.DecalManager.CreateBlood(transform.position, r);
 		}
 		
-		if(isDead || HitpointsCurrent <= 0) {
-			if(!isDead) {
+		// death
+		if(IsDead || HitpointsCurrent <= 0) {
+			if(!IsDead) {
 				die();
 			}
-			deathTime += MyTime.deltaTime;
-			float angle = MoreMath.Clamp(deathTime / DEATH_FALLTIME, 0.0f, 1.0f) * 90.0f;
+			DeathTime += MyTime.deltaTime;
+			float angle = MoreMath.Clamp(DeathTime / DEATH_FALLTIME, 0.0f, 1.0f) * 90.0f;
 			this.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0,0,1));
-			float p = deathTime / DEATH_COOLDOWN;
+			float p = DeathTime / DEATH_COOLDOWN;
 			this.transform.position = new Vector3(this.transform.position.x, 0.05f * (1.0f - 2.0f*p), this.transform.position.z);
-			if(deathTime > DEATH_COOLDOWN) {
+			if(DeathTime > DEATH_COOLDOWN) {
 				Globals.People.Kill(this);
 			}
 			return;
 		}
 		
-		if(!attack()) move();
+		// movement and attack
+		if(!attack() && attackCooldown <= 0) move();
 	}
 	
 	void die() {
 		audio.PlayOneShot(Globals.People.RandomDeathAudio);
-		isDead = true;
+		IsDead = true;
 		foreach(Building b in BuildingsInRange) {
 			b.WitnessDeath(faction, murderer.faction);
 		}
@@ -145,38 +151,39 @@ public class Person : MonoBehaviour {
 		}
 		audio.PlayOneShot(Globals.People.RandomHitAudio);
 		Globals.DecalManager.CreateBlood(transform.position, 0.03f*(float)damage);
-		attackCooldown = Random.Range(1.2f, 1.9f);
+		attackCooldown = ATTACK_COOLDOWN + Random.Range(-0.3f, +0.3f);
 		return true;
 	}
 	
 	void move() {
 		Vector3 moveLevel = computeAvoidLevel();
-		Debug.DrawRay(this.transform.position, moveLevel, Color.blue);
+		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
 		
 		Vector3 moveAvoid = computeAvoidOther();
-		Debug.DrawRay(this.transform.position, 2.0f*moveAvoid, Color.yellow);
+		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
 		
 		Vector3 moveFollow = computeFollow();
-		Debug.DrawRay(this.transform.position, 2.0f*moveFollow, Color.red);
+		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
 
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
-		Debug.DrawRay(this.transform.position, moveRndGoal, Color.green);
+		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
 		
 		Vector3 moveOther = Vector3.zero;
 		foreach(Vector3 v in AdditionalForces) {
 			moveOther += v;
 		}
 		AdditionalForces.Clear();
-		Debug.DrawRay(this.transform.position, 2.0f*moveOther, Color.white);
+		Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
 		
 		Vector3 move = moveLevel + moveAvoid + moveFollow + moveRndGoal + moveOther;
 		
 		// some randomness
-		move += 0.05f * MoreMath.RandomInsideUnitCircleXZ;
+		move += 0.10f * MoreMath.RandomInsideUnitCircleXZ;
 		// limit max velocity
-		float speed = IsFast ? SPEED_NORMAL : SPEED_FAST;
+		float speed = IsFast ? SPEED_FAST : SPEED_NORMAL;
 		move *= speed / move.magnitude;
 		Velocity = MoreMath.Interpolate(Velocity, move, VELOCITY_MIX_STRENGTH);
+		Velocity = new Vector3(Velocity.x, 0.0f, Velocity.z);
 		
 		// compute new position
 		Vector3 npos = transform.position + MyTime.deltaTime * Velocity;
@@ -190,14 +197,10 @@ public class Person : MonoBehaviour {
 			transform.localRotation = MoreMath.RotAngle(-angle_final);
 		}
 		else {
+			Debug.Log("Blocked");
 			// new position is not possible
 		}
 	}
-	
-//	bool isEnemy(Person x) {
-//		return ((faction == Faction.Neutral || faction == Faction.Police) && x.faction != faction)
-//				|| (faction == Faction.Rebel && x.faction == Faction.Police);
-//	}
 	
 	void updatePersonsInRange() {
 		this.PersonsInRange = Globals.People.GetInRange(this, PERSON_LOOK_RADIUS).ToList();
@@ -206,7 +209,7 @@ public class Person : MonoBehaviour {
 		int cnt_balance = 0;
 		float closest_dist = 1000.0f;
 		foreach(Person x in this.PersonsInRange) {
-			if(x.isDead)
+			if(x.IsDead)
 				continue;
 			cnt_total ++;
 			if(x.faction != faction) {
@@ -243,7 +246,7 @@ public class Person : MonoBehaviour {
 		float d_min = 2.0f * RADIUS;
 		foreach(Person x in PersonsInRange) {
 			Vector3 delta = x.transform.position - transform.position;
-			force -= AVOID_STRENGTH * avoidFalloff(delta.magnitude, d_min) * delta.normalized;
+			force -= AVOID_OTHER_STRENGTH * avoidFalloff(delta.magnitude, d_min) * delta.normalized;
 		}
 		return force;
 	}

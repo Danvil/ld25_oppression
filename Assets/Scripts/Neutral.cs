@@ -12,7 +12,9 @@ public class Neutral : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		myself.IsFleeing = true;
+		myself.IsFleeing = myself.ClosestEnemy;
 		myself.FollowTarget = myself.ClosestEnemy;
+		myself.SetEnableRandomGoals(!myself.FollowTarget && !myself.IsFleeing);
+		myself.IsFast = myself.IsFleeing;
 	}
 }

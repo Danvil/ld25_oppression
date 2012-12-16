@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using MoreLinq;
 
 public class Police : MonoBehaviour {
@@ -13,17 +14,20 @@ public class Police : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		myself.IsFleeing = false;
 		// target
-		Person target = myself.PersonsInRange.Count == 0 ? null : myself.PersonsInRange.MinBy(x =>
-			(x.transform.position - myself.transform.position).magnitude
-			+ (x.faction==Faction.Police ? 1000.0f : (x.faction==Faction.Neutral ? 0.25f : 0.0f )));
-		if(target && target.faction != Faction.Police) {
+		myself.FollowTarget = null;
+		myself.AttackTarget = null;
+		var q = from x in myself.PersonsInRange where x.faction != Faction.Police && (!x.IsDead || x.DeathTime < 2.0f) select x;
+		if(q.Count() > 0) {
+			Person target = q.MinBy(x => (x.transform.position - myself.transform.position).sqrMagnitude);
 			myself.FollowTarget = target;
 			myself.AttackTarget = target;
 		}
-		else {
-			myself.FollowTarget = null;
-			myself.AttackTarget = null;
-		}
+		myself.IsFast = myself.AttackTarget;
+		// random goal
+		myself.SetEnableRandomGoals(!(
+			myself.FollowTarget || (myself.Squad && myself.Squad.InSquadRange(myself))
+		));
 	}
 }

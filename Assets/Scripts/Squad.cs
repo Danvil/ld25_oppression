@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class Squad : MonoBehaviour
 {
 	const float SQUAD_RANGE_MAX = 3.0f;
+	const float SQUAD_STRENGTH = 0.7f;
 	
 	List<Person> members = new List<Person>();
 	
@@ -31,7 +32,7 @@ public class Squad : MonoBehaviour
 		}
 		swarm = swarm.normalized;
 		foreach(Person p in members) {
-			p.AdditionalForces.Add(2.0f * swarm);
+			p.AdditionalForces.Add(SQUAD_STRENGTH * swarm);
 		}
 	}
 }

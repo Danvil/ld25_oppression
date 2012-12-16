@@ -94,9 +94,9 @@ public class City : MonoBehaviour {
 				}
 				else {
 					occupancyLayer[x,y] = 1;
-					occupancyLayer[x+1,y] = 1;
+					//occupancyLayer[x+1,y] = 1;
 					occupancyLayer[x+2,y] = 1;
-					//occupancyLayer[x,y+1] = 1;
+					occupancyLayer[x,y+1] = 1;
 					occupancyLayer[x+2,y+1] = 1;
 					occupancyLayer[x,y+2] = 1;
 					occupancyLayer[x+1,y+2] = 1;
@@ -108,7 +108,7 @@ public class City : MonoBehaviour {
 		for(int i=0; i<size; i++) {
 			for(int j=0; j<size; j++) {
 				GameObject u;
-				if(occupancyLayer[i,j] == 1) {
+				if(occupancyLayer[j,i] == 1) {
 					// create building
 					u = (GameObject)Instantiate(pfBuilding);
 					buildings.Add(u.GetComponent<Building>());
