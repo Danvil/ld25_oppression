@@ -179,7 +179,8 @@ public class Person : MonoBehaviour {
 			if(x.isDead)
 				continue;
 			cnt_total ++;
-			if(x.faction != this.faction) {
+			if(((faction == Faction.Neutral || faction == Faction.Police) && x.faction != faction)
+				|| (faction == Faction.Rebel && x.faction == Faction.Police)) {
 				cnt_balance --;
 				float dist = (x.transform.position - transform.position).magnitude;
 				if(dist < closest_dist) {
