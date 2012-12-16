@@ -33,20 +33,20 @@ public class PeopleManager : MonoBehaviour {
 	public GameObject pfRebel;
 	public GameObject pfPolice;
 	
-	List<Person> rebels = new List<Person>();
+	List<Person> people = new List<Person>();
 	
 	public void Add(Person x) {
-		rebels.Add(x);
+		people.Add(x);
 	}
 	
 	public void Kill(Person x) {
-		if(rebels.Remove(x)) {
+		if(people.Remove(x)) {
 			Destroy(x.gameObject);
 		}
 	}
 	
 	public IEnumerable<Person> GetInRange(Vector3 pos, float r) {
-		foreach(Person x in rebels.ToArray()) {
+		foreach(Person x in people.ToArray()) {
 			float d = (pos - x.transform.position).magnitude;
 			if(d < r) {
 				yield return x;
@@ -55,7 +55,7 @@ public class PeopleManager : MonoBehaviour {
 	}
 
 	public IEnumerable<Person> GetInRange(Person source, float r) {
-		foreach(Person x in rebels.ToArray()) {
+		foreach(Person x in people.ToArray()) {
 			float d = (source.transform.position - x.transform.position).magnitude;
 			if(x != source && d < r) {
 				yield return x;
@@ -73,6 +73,9 @@ public class PeopleManager : MonoBehaviour {
 	}
 	
 	public Person Generate(Faction faction, Vector3 position) {
+		if(people.Count > 300) {
+			return null;
+		}
 		GameObject x = (GameObject)Instantiate(getFactionPrefab(faction));
 		x.transform.position = position;
 		x.transform.parent = this.transform;
