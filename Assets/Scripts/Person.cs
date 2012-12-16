@@ -17,6 +17,9 @@ public class Person : MonoBehaviour {
 	const float ROTATION_MIX_STRENGTH = 0.3f;
 	const float VELOCITY_MIX_STRENGTH = 0.04f;
 	
+	public GameObject pfMarkerPolice;
+	public GameObject pfMarkerRebels;
+
 	public int hitpointsMax = 10;
 	public int damage = 1;
 	public Faction faction;
@@ -25,6 +28,7 @@ public class Person : MonoBehaviour {
 	public List<Person> PersonsInRange { get; private set; }
 	public Person ClosestEnemy { get; private set; }
 	public int ThreatLevel { get; private set; }
+	public Vector3 Velocity { get; private set; }
 	
 	public Person FollowTarget { get; set; }
 	public bool IsFleeing { get; set; }
@@ -32,12 +36,29 @@ public class Person : MonoBehaviour {
 	public List<Vector3> AdditionalForces { get; set; }
 	public bool IsFast { get; set; }
 		
+	public Squad Squad { get; set; }
+	public bool IsSquadLeader { get; private set; }
+	GameObject squadMarker;
+	
+	public void MakeSquad() {
+		if(IsSquadLeader)
+			return;
+		gameObject.AddComponent<Squad>();
+		Squad = GetComponent<Squad>();
+		Squad.Add(this);
+		IsSquadLeader = true;
+		squadMarker = (GameObject)Instantiate(faction == Faction.Police ? pfMarkerPolice : pfMarkerRebels);
+		squadMarker.transform.parent = this.transform;
+		squadMarker.transform.localPosition = Vector3.zero;
+		squadMarker.transform.localRotation = Quaternion.identity;
+		squadMarker.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+	}
+	
 	bool isDead = false;
 	float deathTime = 0.0f;
 	Person murderer;	
 	float attackCooldown;
 	RandomGoalPicker randomGoalPicker;
-	Vector3 velocityOld = Vector3.zero;
 	
 	// Use this for initialization
 	void Start () {
@@ -46,6 +67,8 @@ public class Person : MonoBehaviour {
 		PersonsInRange = new List<Person>();
 		ClosestEnemy = null;
 		ThreatLevel = 0;
+		Velocity = Vector3.zero;
+		
 		randomGoalPicker = GetComponent<RandomGoalPicker>();
 		if(randomGoalPicker)
 			randomGoalPicker.IsEnabled = true;
@@ -130,7 +153,7 @@ public class Person : MonoBehaviour {
 		Debug.DrawRay(this.transform.position, 2.0f*moveAvoid, Color.yellow);
 		
 		Vector3 moveFollow = computeFollow();
-		Debug.DrawRay(this.transform.position, 2.0f*moveAvoid, Color.red);
+		Debug.DrawRay(this.transform.position, 2.0f*moveFollow, Color.red);
 
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
 		Debug.DrawRay(this.transform.position, 2.0f*moveRndGoal, Color.green);
@@ -149,11 +172,10 @@ public class Person : MonoBehaviour {
 		// limit max velocity
 		float speed = IsFast ? SPEED_NORMAL : SPEED_FAST;
 		move *= speed / move.magnitude;
-		Vector3 velocity = MoreMath.Interpolate(velocityOld, move, VELOCITY_MIX_STRENGTH);
-		velocityOld = velocity;
+		Velocity = MoreMath.Interpolate(Velocity, move, VELOCITY_MIX_STRENGTH);
 		
 		// compute new position
-		Vector3 npos = transform.position + MyTime.deltaTime * velocity;
+		Vector3 npos = transform.position + MyTime.deltaTime * Velocity;
 		npos = new Vector3(npos.x, 0, npos.z);
 		if(!Globals.City.IsBlocked(npos)) {
 			transform.position = npos;

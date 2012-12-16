@@ -84,9 +84,11 @@ public class Building : MonoBehaviour {
 			}
 		}
 		markerRebels = (GameObject)Instantiate(pfMarkerRebels);
+		markerRebels.transform.Translate(new Vector3(0,1,0));
 		markerRebels.transform.parent = this.transform;
 		markerRebels.SetActive(false);
 		markerPolice = (GameObject)Instantiate(pfMarkerRebels);
+		markerPolice.transform.Translate(new Vector3(0,1,0));
 		markerPolice.transform.parent = this.transform;
 		markerPolice.SetActive(false);
 	}

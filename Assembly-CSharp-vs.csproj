@@ -61,6 +61,7 @@
      <Compile Include="Assets\Scripts\QuadMesh.cs" />
      <Compile Include="Assets\Scripts\RandomGoalPicker.cs" />
      <Compile Include="Assets\Scripts\Rebel.cs" />
+     <Compile Include="Assets\Scripts\Squad.cs" />
      <Compile Include="Assets\Scripts\Street.cs" />
      <None Include="Assets\MoreLinq.xml" />
  <Reference Include="MoreLinq">
