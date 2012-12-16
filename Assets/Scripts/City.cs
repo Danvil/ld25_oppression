@@ -54,8 +54,6 @@ public class City : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		createCityRegular();
-		Vector3 cityCenter = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin);
-		Globals.MainCamera.transform.position = new Vector3(cityCenter.x, Globals.MainCamera.transform.position.y, cityCenter.z);
 	}
 	
 	// Update is called once per frame
