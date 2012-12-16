@@ -86,5 +86,13 @@ public static class MoreMath
 		}
 		return x + p * d;
 	}
+	
+	public static float RandomNormalDist(float mean, float stdDev) {
+		// http://stackoverflow.com/questions/218060/random-gaussian-variables
+		float u1 = Random.value; //these are uniform(0,1) random doubles
+		float u2 = Random.value;
+		float randStdNormal = Mathf.Sqrt(-2.0f * Mathf.Log(u1)) * Mathf.Sin(2.0f * Mathf.PI * u2); //random normal(0,1)
+		return mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
+	}
 
 }

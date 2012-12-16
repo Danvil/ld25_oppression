@@ -62,6 +62,24 @@ public class PeopleManager : MonoBehaviour {
 			}
 		}
 	}
+	
+	GameObject getFactionPrefab(Faction faction) {
+		switch(faction) {
+		case Faction.Rebel: return pfRebel;
+		case Faction.Neutral: return pfNeutral;
+		case Faction.Police: return pfPolice;
+		default: return null;
+		}
+	}
+	
+	public void Generate(Faction faction, Vector3 position) {
+		GameObject x = (GameObject)Instantiate(getFactionPrefab(faction));
+		x.transform.position = position;
+		x.transform.parent = this.transform;
+		Person p = x.GetComponent<Person>();
+		p.faction = faction;
+		Add(p);
+	}
 
 	void Awake() {
 		if(Globals.People != null) {
@@ -74,30 +92,15 @@ public class PeopleManager : MonoBehaviour {
 	void Start() {
 		Vector3 centerRebel = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,1);
 		for(int i=0; i<30; i++) {
-			GameObject x = (GameObject)Instantiate(pfRebel);		
-			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerRebel;
-			x.transform.parent = this.transform;
-			Person p = x.GetComponent<Person>();
-			p.faction = Faction.Rebel;
-			Add(p);
+			Generate(Faction.Rebel, MoreMath.RandomInsideUnitCircleXZ + centerRebel);
 		}
 		Vector3 centerNeutral = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(-2,0,-.5f);
 		for(int i=0; i<50; i++) {
-			GameObject x = (GameObject)Instantiate(pfNeutral);		
-			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerNeutral;
-			x.transform.parent = this.transform;
-			Person p = x.GetComponent<Person>();
-			p.faction = Faction.Neutral;
-			Add(p);
+			Generate(Faction.Neutral, MoreMath.RandomInsideUnitCircleXZ + centerNeutral);
 		}
 		Vector3 centerPolice = 0.5f*(Globals.City.SizeMax + Globals.City.SizeMin) + new Vector3(0,0,-2);
 		for(int i=0; i<30; i++) {
-			GameObject x = (GameObject)Instantiate(pfPolice);		
-			x.transform.position = MoreMath.RandomInsideUnitCircleXZ + centerPolice;
-			x.transform.parent = this.transform;
-			Person p = x.GetComponent<Person>();
-			p.faction = Faction.Police;
-			Add(p);
+			Generate(Faction.Police, MoreMath.RandomInsideUnitCircleXZ + centerPolice);
 		}
 	}
 	

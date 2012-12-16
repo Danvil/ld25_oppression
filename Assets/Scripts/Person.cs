@@ -17,11 +17,12 @@ public class Person : MonoBehaviour {
 	const float DEATH_FALLTIME = 0.7f;
 	const float ROTATION_MIX_STRENGTH =0.9f;
 	const int MAX_HITPOINTS = 10;
+	const float DEATH_WITNESS_RANGE = 2.0f;
 	
 	int hitpoints = MAX_HITPOINTS;
 	bool isDead = false;
 	float deathTime = 0.0f;
-	Vector3 death_axis;
+	Person murderer;
 	
 	Vector3 goal;
 	float goalWaitTime;
@@ -53,14 +54,11 @@ public class Person : MonoBehaviour {
 		
 		if(isDead || hitpoints <= 0) {
 			if(!isDead) {
-				audio.PlayOneShot(Globals.People.RandomDeathAudio);
-				isDead = true;
-				float deathangle = 0.0f; Random.Range(0.0f, 360.0f);
-				death_axis = new Vector3(Mathf.Sin(deathangle), 0.0f, Mathf.Cos(deathangle));
+				die();
 			}
 			deathTime += MyTime.deltaTime;
 			float angle = MoreMath.Clamp(deathTime / DEATH_FALLTIME, 0.0f, 1.0f) * 90.0f;
-			this.transform.rotation = Quaternion.AngleAxis(angle, death_axis);
+			this.transform.rotation = Quaternion.AngleAxis(angle, new Vector3(0,0,1));
 			float p = deathTime / DEATH_COOLDOWN;
 			this.transform.position = new Vector3(this.transform.position.x, 0.05f * (1.0f - 2.0f*p), this.transform.position.z);
 			if(deathTime > DEATH_COOLDOWN) {
@@ -94,6 +92,14 @@ public class Person : MonoBehaviour {
 		}
 	}
 	
+	void die() {
+		audio.PlayOneShot(Globals.People.RandomDeathAudio);
+		isDead = true;
+		foreach(Building b in Globals.City.GetBuildingsInRange(transform.position, DEATH_WITNESS_RANGE)) {
+			b.WitnessDeath(faction, murderer.faction);
+		}
+	}
+	
 	bool isFleeing() {
 		return faction != Faction.Police && (hitpoints <= 3 || thread_level <= -3);
 	}
@@ -119,7 +125,12 @@ public class Person : MonoBehaviour {
 		else {
 			dmg = 1;
 		}
-		target.hitpoints = MoreMath.Clamp(target.hitpoints-dmg, 0, MAX_HITPOINTS);
+		if(target.hitpoints > 0) {
+			target.hitpoints = MoreMath.Clamp(target.hitpoints-dmg, 0, MAX_HITPOINTS);
+			if(target.hitpoints <= 0) {
+				target.murderer = this;
+			}
+		}
 		audio.PlayOneShot(Globals.People.RandomHitAudio);
 		Globals.DecalManager.CreateBlood(transform.position, 0.03f*(float)dmg);
 		attackCooldown = Random.Range(1.2f, 1.9f);

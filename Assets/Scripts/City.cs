@@ -41,6 +41,15 @@ public class City : MonoBehaviour {
 			Mathf.FloorToInt(p.z));
 	}
 	
+	public IEnumerable<Building> GetBuildingsInRange(Vector3 position, float radius) {
+		float r2 = radius;
+		foreach(Building x in buildings.ToArray()) {
+			if((position - x.transform.position).sqrMagnitude < r2) {
+				yield return x;
+			}
+		}
+	}
+	
 	void Awake() {
 		if(Globals.City != null) {
 			throw new Exception("Only one city allowed!");
@@ -81,7 +90,7 @@ public class City : MonoBehaviour {
 					occupancyLayer[x,y] = 1;
 					occupancyLayer[x+1,y] = 1;
 					occupancyLayer[x+2,y] = 1;
-					occupancyLayer[x,y+1] = 1;
+					//occupancyLayer[x,y+1] = 1;
 					occupancyLayer[x+2,y+1] = 1;
 					occupancyLayer[x,y+2] = 1;
 					occupancyLayer[x+1,y+2] = 1;
