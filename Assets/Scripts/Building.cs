@@ -3,7 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Building : MonoBehaviour {
-
+	
+	public GameObject pfMarkerPolice;
+	public GameObject pfMarkerRebels;
+	
 	public Vector3[] rawGates;
 
 	List<Vector3> gates = new List<Vector3>();
