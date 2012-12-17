@@ -21,6 +21,8 @@ public class Person : MonoBehaviour {
 	const float UPDATE_IN_RANGE_COOLDOWN = 0.597f;
 	const bool RENDER_GIZMOS = true;
 	
+	const float UPDATE_MOVE_DT = 0.25f;
+	
 	public GameObject pfMarkerPolice;
 	public GameObject pfMarkerRebels;
 
@@ -46,6 +48,8 @@ public class Person : MonoBehaviour {
 	public Squad Squad { get; set; }
 	public bool IsSquadLeader { get; private set; }
 	GameObject squadMarker;
+	
+	Vector3 move;
 	
 	public bool IsRampageSquad {
 		get {
@@ -102,6 +106,8 @@ public class Person : MonoBehaviour {
 
 	}
 	
+	float next_update_move = 0.0f;
+	
 	// Update is called once per frame
 	void Update () {
 		updateInRangeCooldown -= MyTime.deltaTime;
@@ -141,7 +147,33 @@ public class Person : MonoBehaviour {
 		}
 		
 		// movement and attack
-		if(!attack() && attackCooldown <= 0) move();
+		if(!attack() && attackCooldown <= 0) {
+			if(MyTime.time >= next_update_move) {
+				next_update_move = MyTime.time + UPDATE_MOVE_DT;
+				updateMove();
+			}
+			if(RENDER_GIZMOS) {
+				Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), move, Color.white);
+				Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), Velocity, Color.black);
+			}
+			Velocity = MoreMath.Interpolate(Velocity, move, VELOCITY_MIX_STRENGTH);
+			Velocity = new Vector3(Velocity.x, 0.0f, Velocity.z);
+			// compute new position
+			Vector3 npos = transform.position + MyTime.deltaTime * Velocity;
+			npos = new Vector3(npos.x, 0, npos.z);
+			if(!Globals.City.IsBlocked(npos)) {
+				transform.position = npos;
+				// compute new rotation
+				float angle_old = MoreMath.VectorAngle(transform.localRotation * Vector3.right);
+				float angle_new = MoreMath.VectorAngle(Velocity.normalized);
+				float angle_final = MoreMath.SlerpAngle(angle_old, angle_new, ROTATION_MIX_STRENGTH * MyTime.deltaTime);
+				transform.localRotation = MoreMath.RotAngle(-angle_final);
+			}
+			//else {
+			//	Debug.Log("Blocked");
+			//	// new position is not possible
+			//}
+		}
 	}
 	
 	void die() {
@@ -176,7 +208,7 @@ public class Person : MonoBehaviour {
 		return true;
 	}
 	
-	void move() {
+	void updateMove() {
 		Vector3 moveLevel = computeAvoidLevel();	
 		Vector3 moveAvoid = computeAvoidOther();	
 		Vector3 moveFollow = computeFollow();
@@ -186,6 +218,7 @@ public class Person : MonoBehaviour {
 		foreach(Vector3 v in AdditionalForces) {
 			moveOther += v;
 		}
+		moveOther *= 1.0f / (float)AdditionalForces.Count;
 		AdditionalForces.Clear();
 		
 		if(RENDER_GIZMOS) {
@@ -193,10 +226,10 @@ public class Person : MonoBehaviour {
 			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
 			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
 			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
-			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.magenta);
 		}
 		
-		Vector3 move = moveFollow + moveRndGoal + moveOther;
+		move = moveFollow + moveRndGoal + moveOther;
 		if(!IsUnmovable) {
 			move += moveLevel + moveAvoid;
 			// some randomness
@@ -211,25 +244,7 @@ public class Person : MonoBehaviour {
 		}
 		else {
 			move = Vector3.zero;
-		}
-		Velocity = MoreMath.Interpolate(Velocity, move, VELOCITY_MIX_STRENGTH);
-		Velocity = new Vector3(Velocity.x, 0.0f, Velocity.z);
-		
-		// compute new position
-		Vector3 npos = transform.position + MyTime.deltaTime * Velocity;
-		npos = new Vector3(npos.x, 0, npos.z);
-		if(!Globals.City.IsBlocked(npos)) {
-			transform.position = npos;
-			// compute new rotation
-			float angle_old = MoreMath.VectorAngle(transform.localRotation * Vector3.right);
-			float angle_new = MoreMath.VectorAngle(move.normalized);
-			float angle_final = MoreMath.SlerpAngle(angle_old, angle_new, ROTATION_MIX_STRENGTH * MyTime.deltaTime);
-			transform.localRotation = MoreMath.RotAngle(-angle_final);
-		}
-		else {
-			//Debug.Log("Blocked");
-			// new position is not possible
-		}
+		}		
 	}
 	
 	bool isThreat(Faction f) {

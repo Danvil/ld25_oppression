@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class PeopleManager : MonoBehaviour {
 	
+	const int MAX_PEOPLE = 1000;
+	
 	public AudioClip[] audioHit;
 	public AudioClip[] audioDeath;
 	
@@ -85,7 +87,7 @@ public class PeopleManager : MonoBehaviour {
 	}
 	
 	public Person Generate(Faction faction, Vector3 position) {
-		if(people.Count > 500) {
+		if(people.Count > MAX_PEOPLE) {
 			return null;
 		}
 		GameObject x = (GameObject)Instantiate(getFactionPrefab(faction));
