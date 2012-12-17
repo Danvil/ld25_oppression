@@ -43,6 +43,23 @@ public class Police : MonoBehaviour {
 				if(myself.Squad && Tools.Distance(myself,myself.Squad.Leader) > FAR_SQUAD_RANGE) {
 					isReturning = true;
 				}
+				// look for leader
+				if(!myself.Squad) {
+					Person possibleLeader = (from x in myself.PersonsInRange where x.faction == Faction.Police && x.IsSquadLeader select x).FirstOrDefault();
+					if(possibleLeader) {
+						//if(MoreMath.CheckOccurence(SQUAD_JOIN_RATE)) {
+							// join squad
+							possibleLeader.Squad.Add(myself);
+						//}
+					}
+					else {
+//						if(MoreMath.CheckOccurence(SQUAD_CREATE_RATE)) {
+//							// become leader
+//							myself.MakeSquad();
+//						}
+					}
+				}
+				// rest
 				myself.IsFleeing = (myself.ThreatLevel <= -5);
 				Person p;
 				if(myself.IsFleeing) {
