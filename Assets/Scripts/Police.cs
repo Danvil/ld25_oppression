@@ -33,7 +33,7 @@ public class Police : MonoBehaviour {
 				myself.AttackTarget = null;
 				myself.IsFast = true;
 				myself.SetEnableRandomGoals(false);
-				if(Tools.Distance(myself,myself.Squad.Leader) < NEAR_SQUAD_RANGE) {
+				if(!myself.Squad || Tools.Distance(myself,myself.Squad.Leader) < NEAR_SQUAD_RANGE) {
 					isReturning = false;
 				}
 			}

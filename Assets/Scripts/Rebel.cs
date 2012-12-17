@@ -6,7 +6,7 @@ public class Rebel : MonoBehaviour {
 	
 	const float SQUAD_DIST_NEAR = 0.5f;
 	const float SQUAD_DIST_FAR = 0.8f;
-	const float SQUAD_JOIN_RATE = 0.1f;
+	const float SQUAD_JOIN_RATE = 0.5f;
 	const float SQUAD_CREATE_RATE = 0.01f;
 	
 	Person myself;
@@ -48,12 +48,12 @@ public class Rebel : MonoBehaviour {
 				myself.AttackTarget = null;
 				myself.IsFast = true;
 				myself.SetEnableRandomGoals(false);
-				if(Tools.Distance(myself,myself.Squad.Leader) < SQUAD_DIST_NEAR) {
+				if(!myself.Squad || Tools.Distance(myself,myself.Squad.Leader) < SQUAD_DIST_NEAR) {
 					isReturning = false;
 				}
 			}
 			else {
-				if(!myself.Squad.Leader.IsFleeing && myself.Squad && Tools.Distance(myself,myself.Squad.Leader) > SQUAD_DIST_FAR) {
+				if(myself.Squad && !myself.Squad.Leader.IsFleeing && Tools.Distance(myself,myself.Squad.Leader) > SQUAD_DIST_FAR) {
 					isReturning = true;
 				}
 				// normal behaviour

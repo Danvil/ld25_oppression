@@ -73,7 +73,7 @@ public class PeopleManager : MonoBehaviour {
 	}
 	
 	public Person Generate(Faction faction, Vector3 position) {
-		if(people.Count > 300) {
+		if(people.Count > 2500) {
 			return null;
 		}
 		GameObject x = (GameObject)Instantiate(getFactionPrefab(faction));

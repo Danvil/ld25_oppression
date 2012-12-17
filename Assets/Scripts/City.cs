@@ -50,6 +50,19 @@ public class City : MonoBehaviour {
 		}
 	}
 	
+	public void WitnessDeath(Faction victim, Faction murderer) {
+		float supportDelta = 0.0f;
+		if(murderer == Faction.Police) {
+			supportDelta -= 5.0f;
+		}
+		if(murderer == Faction.Rebel) {
+			supportDelta += 5.0f;
+		}
+		foreach(Building x in buildings) {
+			x.ChangeSupport(supportDelta);
+		}
+	}
+	
 	void Awake() {
 		if(Globals.City != null) {
 			throw new Exception("Only one city allowed!");

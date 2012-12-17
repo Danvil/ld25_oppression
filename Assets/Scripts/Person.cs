@@ -151,6 +151,7 @@ public class Person : MonoBehaviour {
 		IsDead = true;
 		foreach(Building b in BuildingsInRange) {
 			b.WitnessDeath(faction, murderer.faction);
+			Globals.City.WitnessDeath(faction, murderer.faction);
 		}
 	}
 	

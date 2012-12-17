@@ -75,11 +75,10 @@ public class Building : MonoBehaviour {
 				factionSupport -= SUPPORT_CHANGE_X_YkX;
 			}
 		}
-		// limit support
-		if(factionSupport < -SUPPORT_MAX)
-			factionSupport = -SUPPORT_MAX;
-		if(factionSupport > SUPPORT_MAX)
-			factionSupport = +SUPPORT_MAX;
+	}
+	
+	public void ChangeSupport(float delta) {
+		factionSupport += delta;
 	}
 	
 	GameObject markerNeutral;
@@ -133,6 +132,12 @@ public class Building : MonoBehaviour {
 				faction = Faction.Neutral;
 			}
 		}
+
+		// limit support
+		if(factionSupport < -SUPPORT_MAX)
+			factionSupport = -SUPPORT_MAX;
+		if(factionSupport > SUPPORT_MAX)
+			factionSupport = +SUPPORT_MAX;
 
 		// generate
 		float generate_rate = GENERATE_RATE + Mathf.Abs(factionSupport) * GENERATE_RATE_SUPPORT;
