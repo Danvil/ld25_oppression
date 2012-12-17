@@ -7,7 +7,8 @@ public class Rebel : MonoBehaviour {
 	const float SQUAD_DIST_NEAR = 0.5f;
 	const float SQUAD_DIST_FAR = 0.8f;
 	const float SQUAD_JOIN_RATE = 0.5f;
-	const float SQUAD_CREATE_RATE = 0.01f;
+	const float SQUAD_CREATE_RATE = 0.005f;
+	const float RAMPAGE_RATE = 0.01f;
 	
 	Person myself;
 	bool isReturning = false;
@@ -39,17 +40,22 @@ public class Rebel : MonoBehaviour {
 				myself.IsFleeing = false;
 				myself.SetEnableRandomGoals(true);
 			}
+			if(MoreMath.CheckOccurence(RAMPAGE_RATE)) {
+				myself.Squad.IsRampage = !myself.Squad.IsRampage;
+			}
 		}
 		else {
 			if(isReturning) {
-				myself.IsFleeing = false;
-				// return to squad
-				myself.FollowTarget = myself.Squad.Leader;
-				myself.AttackTarget = null;
-				myself.IsFast = true;
-				myself.SetEnableRandomGoals(false);
 				if(!myself.Squad || Tools.Distance(myself,myself.Squad.Leader) < SQUAD_DIST_NEAR) {
 					isReturning = false;
+				}
+				else {
+					myself.IsFleeing = false;
+					// return to squad
+					myself.FollowTarget = myself.Squad.Leader;
+					myself.AttackTarget = null;
+					myself.IsFast = true;
+					myself.SetEnableRandomGoals(false);
 				}
 			}
 			else {

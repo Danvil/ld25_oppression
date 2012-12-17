@@ -32,7 +32,9 @@ public class PeopleManager : MonoBehaviour {
 	public GameObject pfNeutral;
 	public GameObject pfRebel;
 	public GameObject pfPolice;
-	
+
+	public GameObject pfRampage;
+
 	List<Person> people = new List<Person>();
 	
 	public void Add(Person x) {

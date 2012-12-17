@@ -10,7 +10,11 @@ public class Squad : MonoBehaviour
 	
 	List<Person> members = new List<Person>();
 	
+	GameObject rampage;
+	
 	public Person Leader { get; set; }
+	
+	public bool IsRampage { get; set; }
 	
 	public void Add(Person p) {
 		p.Squad = this;
@@ -18,6 +22,11 @@ public class Squad : MonoBehaviour
 	}
 	
 	void Start() {
+		IsRampage = false;
+		rampage = (GameObject)Instantiate(Globals.People.pfRampage);
+		rampage.transform.parent = this.transform;
+		rampage.transform.localPosition = Vector3.zero;
+		rampage.SetActive(false);
 	}
 	
 	void Update() {
@@ -39,5 +48,6 @@ public class Squad : MonoBehaviour
 			float w = FORCE_STRENGTH / (1.0f + DIST_FALLOFF*Tools.Distance(p, Leader));
 			p.AdditionalForces.Add(w*force);
 		}
+		rampage.SetActive(IsRampage);
 	}
 }

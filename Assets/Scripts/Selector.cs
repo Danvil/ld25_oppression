@@ -57,11 +57,11 @@ public class Selector : MonoBehaviour {
 		
 		if(selected && Input.GetButton("Fire2") && MyTime.time > nextFire) {
 			nextFire = MyTime.time + fireRate;
-			if(selected.IsRampage)
+			selected.Myself.Squad.IsRampage = !selected.Myself.Squad.IsRampage;
+			if(selected.Myself.Squad.IsRampage)
 				Debug.Log("RAMPAGE!");
 			else
 				Debug.Log("calm");
-			selected.IsRampage = !selected.IsRampage;
 		}
 		
 		this.gameObject.GetComponentInChildren<MeshRenderer>().enabled = selected;

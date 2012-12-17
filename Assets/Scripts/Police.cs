@@ -28,13 +28,15 @@ public class Police : MonoBehaviour {
 		}
 		else {
 			if(isReturning) {
-				// return to squad
-				myself.FollowTarget = myself.Squad.Leader;
-				myself.AttackTarget = null;
-				myself.IsFast = true;
-				myself.SetEnableRandomGoals(false);
 				if(!myself.Squad || Tools.Distance(myself,myself.Squad.Leader) < NEAR_SQUAD_RANGE) {
 					isReturning = false;
+				}
+				else {
+					// return to squad
+					myself.FollowTarget = myself.Squad.Leader;
+					myself.AttackTarget = null;
+					myself.IsFast = true;
+					myself.SetEnableRandomGoals(false);
 				}
 			}
 			else {

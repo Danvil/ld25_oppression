@@ -49,9 +49,7 @@ public class Person : MonoBehaviour {
 	
 	public bool IsRampageSquad {
 		get {
-			if(!Squad) return false;
-			Commander c = Squad.Leader.GetComponent<Commander>();
-			return c && c.IsRampage;
+			return Squad && Squad.IsRampage;
 		}
 	}
 	
@@ -278,6 +276,7 @@ public class Person : MonoBehaviour {
 		Vector3 force = Vector3.zero;
 		float d_min = 2.0f * RADIUS;
 		foreach(Person x in PersonsInRange) {
+			if(x.IsDead) continue;
 			Vector3 delta = x.transform.position - transform.position;
 			force -= AVOID_OTHER_STRENGTH * avoidFalloff(delta.magnitude, d_min) * delta.normalized;
 		}
