@@ -215,11 +215,13 @@ public class Person : MonoBehaviour {
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
 		
 		Vector3 moveOther = Vector3.zero;
-		foreach(Vector3 v in AdditionalForces) {
-			moveOther += v;
+		if(AdditionalForces.Count > 0) {
+			foreach(Vector3 v in AdditionalForces) {
+				moveOther += v;
+			}
+			moveOther *= 1.0f / (float)AdditionalForces.Count;
+			AdditionalForces.Clear();
 		}
-		moveOther *= 1.0f / (float)AdditionalForces.Count;
-		AdditionalForces.Clear();
 		
 		if(RENDER_GIZMOS) {
 			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
