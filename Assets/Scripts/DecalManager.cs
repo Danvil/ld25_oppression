@@ -20,15 +20,10 @@ public class DecalManager : MonoBehaviour {
 	}
 
 	public void CreateBlood(Vector3 position, float radius) {
-		return;
 		GameObject x = (GameObject)Instantiate(prefabDecalBlood);
 		add(x, "blood");
 		Decal decal = x.GetComponent<Decal>();
-		//decal.Color = new Color(1.0f, color.g, color.b, 0.0f);
-		//decal.wobbelRadius = wobbelRadius;
-		//decal.follow = null;
 		decal.transform.position = position + new Vector3(0,Random.Range(-0.0009f,+0.0009f),0);
-		//decal.fixedZ = height;
 		decal.transform.localScale = radius * Vector3.one;
 	}
 
