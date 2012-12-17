@@ -113,10 +113,10 @@ public class Person : MonoBehaviour {
 			BuildingsInRange = Globals.City.GetBuildingsInRange(transform.position, BUILDING_RANGE).ToList();	
 			updatePersonsInRange();
 		}
-		else {
-			// purge dead
-			PersonsInRange = (from x in PersonsInRange where !x.IsDead select x).ToList();
-		}
+//		else {
+//			// purge dead
+//			PersonsInRange = (from x in PersonsInRange where !x.IsDead select x).ToList();
+//		}
 		
 		// bleeding
 		HitpointsCurrent = MoreMath.Clamp(HitpointsCurrent, 0, hitpointsMax);
@@ -162,8 +162,8 @@ public class Person : MonoBehaviour {
 		}
 		if(!AttackTarget)
 			return false;
-		float distToTarget = (AttackTarget.transform.position - this.transform.position).magnitude;
-		if(distToTarget > TARGET_HIT_RANGE) {
+		float distToTargetSquare = (AttackTarget.transform.position - this.transform.position).sqrMagnitude;
+		if(distToTargetSquare > TARGET_HIT_RANGE*TARGET_HIT_RANGE) {
 			return false;
 		}
 		if(AttackTarget.HitpointsCurrent > 0) {
@@ -179,24 +179,24 @@ public class Person : MonoBehaviour {
 	}
 	
 	void move() {
-		Vector3 moveLevel = computeAvoidLevel();
-		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
-		
-		Vector3 moveAvoid = computeAvoidOther();
-		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
-		
+		Vector3 moveLevel = computeAvoidLevel();	
+		Vector3 moveAvoid = computeAvoidOther();	
 		Vector3 moveFollow = computeFollow();
-		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
-
 		Vector3 moveRndGoal = (randomGoalPicker ? randomGoalPicker.Force : Vector3.zero);
-		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
 		
 		Vector3 moveOther = Vector3.zero;
 		foreach(Vector3 v in AdditionalForces) {
 			moveOther += v;
 		}
 		AdditionalForces.Clear();
-		if(RENDER_GIZMOS) Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
+		
+		if(RENDER_GIZMOS) {
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveLevel, Color.blue);
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveAvoid, Color.yellow);
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveFollow, Color.red);
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveRndGoal, Color.green);
+			Debug.DrawRay(this.transform.position + new Vector3(0,0.05f,0), moveOther, Color.white);
+		}
 		
 		Vector3 move = moveFollow + moveRndGoal + moveOther;
 		if(!IsUnmovable) {
