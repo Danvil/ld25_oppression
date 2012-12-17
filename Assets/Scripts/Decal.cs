@@ -25,8 +25,11 @@ public class Decal : MonoBehaviour {
 
 	public Color Color {
 		set {
-			renderer.material.color = value;
-			renderer.material.SetColor("_TintColor", value);
+			var renderers = this.GetComponentsInChildren<MeshRenderer>();
+			foreach(var r in renderers) {
+				r.material.color = value;
+				r.material.SetColor("_TintColor", value);
+			}
 		}
 	}
 
@@ -35,10 +38,12 @@ public class Decal : MonoBehaviour {
 			return this.GetComponentInChildren<MeshRenderer>().material.GetColor("_TintColor").a;
 		}
 		set {
-			var renderer = this.GetComponentInChildren<MeshRenderer>();
-			Color col = renderer.material.GetColor("_TintColor");
-			col.a = value;
-			renderer.material.SetColor("_TintColor", col);
+			var renderers = this.GetComponentsInChildren<MeshRenderer>();
+			foreach(var r in renderers) {
+				Color col = r.material.GetColor("_TintColor");
+				col.a = value;
+				r.material.SetColor("_TintColor", col);
+			}
 		}
 	}
 

@@ -9,7 +9,7 @@ public class City : MonoBehaviour {
 	const float SUPPORT_CHANGE_POLICE = +0.2f;
 	const float SUPPORT_CHANGE_MAX = 10.0f;
 	const float SUPPORT_UPDATE_RATE = 1.0f;
-	const float DEATH_SUPPORT_CHANGE = 1.0f;
+	const float DEATH_SUPPORT_CHANGE = 5.0f;
 
 	public GameObject pfBuilding;
 	public GameObject pfStreet;

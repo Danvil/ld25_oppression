@@ -15,7 +15,7 @@ public class Building : MonoBehaviour {
 	const float SUPPORT_CHANGE_X_YkX = -15.0f; // we will all die!
 	const float SUPPORT_CHANGE_X_XkY = 5.0f; // die bastard!
 	const float GENERATE_RATE = 0.01f;
-	const float GENERATE_RATE_SUPPORT = 0.0005f;
+	const float GENERATE_RATE_SUPPORT = 0.0001f;
 	const float GENERATE_SIGMA = 25.0f;
 	const float GENERATE_RANGE = 40.0f;
 	
