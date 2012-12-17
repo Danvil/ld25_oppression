@@ -14,7 +14,7 @@ public class Neutral : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// target
-		var q = from x in myself.PersonsInRange where x.faction == Faction.Police || x.IsDead select x;
+		var q = from x in myself.PersonsInRange where x.faction != Faction.Neutral && x.IsRampageSquad && !x.IsDead select x;
 		Person enemy = Tools.GetNearest(myself, q);	
 		myself.IsFleeing = enemy;
 		myself.AttackTarget = (myself.HitpointsCurrent == myself.hitpointsMax ? enemy : null);

@@ -50,7 +50,7 @@ public class Police : MonoBehaviour {
 				}
 				else {
 					// find victim
-					bool attackCivil = (myself.Squad && myself.Squad.Leader.GetComponent<Commander>() && myself.Squad.Leader.GetComponent<Commander>().IsRampage);
+					bool attackCivil = myself.IsRampageSquad;
 					var q = from x in myself.PersonsInRange where (x.faction == Faction.Rebel || (attackCivil && x.faction == Faction.Neutral)) && (!x.IsDead || x.DeathTime < 2.0f) select x;
 					p = Tools.GetNearest(myself, q);
 				}

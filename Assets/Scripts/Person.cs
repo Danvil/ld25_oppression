@@ -47,6 +47,14 @@ public class Person : MonoBehaviour {
 	public bool IsSquadLeader { get; private set; }
 	GameObject squadMarker;
 	
+	public bool IsRampageSquad {
+		get {
+			if(!Squad) return false;
+			Commander c = Squad.Leader.GetComponent<Commander>();
+			return c && c.IsRampage;
+		}
+	}
+	
 	public void MakeSquad() {
 		if(IsSquadLeader)
 			return;

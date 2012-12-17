@@ -6,6 +6,7 @@ public class Building : MonoBehaviour {
 	
 	const float SUPPORT_DECREASE_RATE = 1.0f;
 	const float SUPPORT_SWITCH = 100.0f;
+	const float SUPPORT_MAX = 180.0f;
 	const float SUPPORT_SWITCH_BIASED = 80.0f;
 	const float SUPPORT_CHANGE_N_XkN = 30.0f; // the poor kid!
 	const float SUPPORT_CHANGE_N_XkY = 5.0f; // his fault
@@ -74,6 +75,11 @@ public class Building : MonoBehaviour {
 				factionSupport -= SUPPORT_CHANGE_X_YkX;
 			}
 		}
+		// limit support
+		if(factionSupport < -SUPPORT_MAX)
+			factionSupport = -SUPPORT_MAX;
+		if(factionSupport > SUPPORT_MAX)
+			factionSupport = +SUPPORT_MAX;
 	}
 	
 	GameObject markerNeutral;

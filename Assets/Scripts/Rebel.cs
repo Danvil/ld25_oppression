@@ -4,13 +4,18 @@ using System.Linq;
 
 public class Rebel : MonoBehaviour {
 	
-	const float SQUAD_DIST = 1.0f;
+	const float SQUAD_DIST_NEAR = 0.5f;
+	const float SQUAD_DIST_FAR = 0.8f;
+	const float SQUAD_JOIN_RATE = 0.1f;
+	const float SQUAD_CREATE_RATE = 0.01f;
 	
 	Person myself;
+	bool isReturning = false;
 	
 	// Use this for initialization
 	void Start () {
 		myself = GetComponent<Person>();
+		isReturning = false;
 	}
 	
 	// Update is called once per frame
@@ -36,19 +41,37 @@ public class Rebel : MonoBehaviour {
 			}
 		}
 		else {
-			if(myself.Squad && (Tools.Distance(myself, myself.Squad.Leader) > SQUAD_DIST || myself.Squad.Leader.IsFleeing)) {
+			if(isReturning) {
 				myself.IsFleeing = false;
 				// return to squad
 				myself.FollowTarget = myself.Squad.Leader;
 				myself.AttackTarget = null;
 				myself.IsFast = true;
 				myself.SetEnableRandomGoals(false);
+				if(Tools.Distance(myself,myself.Squad.Leader) < SQUAD_DIST_NEAR) {
+					isReturning = false;
+				}
 			}
 			else {
+				if(!myself.Squad.Leader.IsFleeing && myself.Squad && Tools.Distance(myself,myself.Squad.Leader) > SQUAD_DIST_FAR) {
+					isReturning = true;
+				}
 				// normal behaviour
 				// look for leader
 				if(!myself.Squad) {
 					Person possibleLeader = (from x in myself.PersonsInRange where x.faction == Faction.Rebel && x.IsSquadLeader select x).FirstOrDefault();
+					if(possibleLeader) {
+						if(MoreMath.CheckOccurence(SQUAD_JOIN_RATE)) {
+							// join squad
+							possibleLeader.Squad.Add(myself);
+						}
+					}
+					else {
+						if(MoreMath.CheckOccurence(SQUAD_CREATE_RATE)) {
+							// become leader
+							myself.MakeSquad();
+						}
+					}
 				}
 				// flee if ...
 				myself.IsFleeing = (myself.HitpointsCurrent <= myself.hitpointsMax/2 || myself.ThreatLevel <= -3);
