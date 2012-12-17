@@ -45,22 +45,32 @@ public class PeopleManager : MonoBehaviour {
 		}
 	}
 	
-	public IEnumerable<Person> GetInRange(Vector3 pos, float r) {
-		foreach(Person x in people.ToArray()) {
-			float d = (pos - x.transform.position).magnitude;
-			if(d < r) {
-				yield return x;
-			}
-		}
-	}
+//	public IEnumerable<Person> GetInRange(Vector3 pos, float r) {
+//		foreach(Person x in people.ToArray()) {
+//			float d = (pos - x.transform.position).magnitude;
+//			if(d < r) {
+//				yield return x;
+//			}
+//		}
+//	}
 
-	public IEnumerable<Person> GetInRange(Person source, float r) {
-		foreach(Person x in people.ToArray()) {
-			float d = (source.transform.position - x.transform.position).magnitude;
-			if(x != source && d < r) {
-				yield return x;
+	public List<Person> GetInRange(Person source, float r) {
+//		foreach(Person x in people.ToArray()) {
+//			float d = (source.transform.position - x.transform.position).magnitude;
+//			if(x != source && d < r) {
+//				yield return x;
+//			}
+//		}
+		Collider[] query = Physics.OverlapSphere(source.transform.position, r);
+		List<Person> result = new List<Person>();
+		result.Capacity = query.Length;
+		foreach(Collider x in query) {
+			Person p = x.gameObject.GetComponent<Person>();
+			if(p && p != source) {
+				result.Add(p);
 			}
 		}
+		return result;
 	}
 	
 	GameObject getFactionPrefab(Faction faction) {
