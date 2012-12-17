@@ -22,6 +22,9 @@ public class Squad : MonoBehaviour
 	
 	void Update() {
 		if(Leader.IsDead) {
+			foreach(Person x in members) {
+				x.Squad = null;
+			}
 			members.Clear();
 		}
 		members = (from x in members where !x.IsDead select x).ToList();

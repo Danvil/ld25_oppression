@@ -5,6 +5,9 @@ public class Selector : MonoBehaviour {
 	
 	Commander selected = null;
 	
+	public float fireRate = 0.7F;
+    private float nextFire = 0.0F;
+	
 	// Use this for initialization
 	void Start () {
 	
@@ -13,7 +16,7 @@ public class Selector : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		// left click -> select commander
-		if(Input.GetMouseButtonDown(0)) {
+		if(Input.GetButton("Fire1")) {
 	        // Shoot ray from mouse position
 	        Ray ray = Globals.MainCamera.ScreenPointToRay(Input.mousePosition);
 	        RaycastHit[] hits = Physics.RaycastAll(ray);
@@ -30,7 +33,7 @@ public class Selector : MonoBehaviour {
 	    }
 			
 		// right click -> set commander goal
-		if(selected && Input.GetMouseButtonDown(0)) {
+		if(selected && Input.GetButton("Fire1")) {
 			// http://answers.unity3d.com/questions/9737/how-can-i-make-the-character-follow-the-mouse-poin.html
 			
 		    // Generate a plane that intersects the transform's position with an upwards normal.
@@ -50,6 +53,15 @@ public class Selector : MonoBehaviour {
 		        // Get the point along the ray that hits the calculated distance.
 		       selected.Target = ray.GetPoint(hitdist);
 		    }
+		}
+		
+		if(selected && Input.GetButton("Fire2") && MyTime.time > nextFire) {
+			nextFire = MyTime.time + fireRate;
+			if(selected.IsRampage)
+				Debug.Log("RAMPAGE!");
+			else
+				Debug.Log("calm");
+			selected.IsRampage = !selected.IsRampage;
 		}
 		
 		this.gameObject.GetComponentInChildren<MeshRenderer>().enabled = selected;

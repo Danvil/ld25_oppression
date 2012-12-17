@@ -7,9 +7,12 @@ public class Commander : MonoBehaviour {
 	
 	public Vector3 Target { get; set; }
 	
+	public bool IsRampage { get; set; }
+	
 	void Awake() {
 		Globals.Commanders.Add(this);
 		Myself = GetComponent<Person>();
+		IsRampage = false;
 	}
 	
 	// Use this for initialization
@@ -24,5 +27,6 @@ public class Commander : MonoBehaviour {
 		if(d.magnitude > 0.03f) {
 			Myself.AdditionalForces.Add(d.normalized);
 		}
+		transform.FindChild("Rampage").gameObject.SetActive(IsRampage);
 	}
 }

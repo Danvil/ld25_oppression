@@ -7,16 +7,16 @@ public class Building : MonoBehaviour {
 	const float SUPPORT_DECREASE_RATE = 1.0f;
 	const float SUPPORT_SWITCH = 100.0f;
 	const float SUPPORT_SWITCH_BIASED = 80.0f;
-	const float SUPPORT_CHANGE_N_XkN = 30.0f;
-	const float SUPPORT_CHANGE_N_XkY = 10.0f;
-	const float SUPPORT_CHANGE_X_YkN = 20.0f;
-	const float SUPPORT_CHANGE_X_XkN = -10.0f;
-	const float SUPPORT_CHANGE_X_YkX = 15.0f;
-	const float SUPPORT_CHANGE_X_XkY = 5.0f;
+	const float SUPPORT_CHANGE_N_XkN = 30.0f; // the poor kid!
+	const float SUPPORT_CHANGE_N_XkY = 5.0f; // his fault
+	const float SUPPORT_CHANGE_X_YkN = 10.0f; // casulties should be avoided!
+	const float SUPPORT_CHANGE_X_XkN = -10.0f; // no civilians
+	const float SUPPORT_CHANGE_X_YkX = -10.0f; // we will all die!
+	const float SUPPORT_CHANGE_X_XkY = 5.0f; // die bastard!
 	const float GENERATE_RATE = 0.01f;
 	const float GENERATE_RATE_SUPPORT = 0.001f;
 	const float GENERATE_SIGMA = 25.0f;
-	const float GENERATE_RANGE = 50.0f;
+	const float GENERATE_RANGE = 40.0f;
 	
 	public GameObject pfMarkerNeutral;
 	public GameObject pfMarkerPolice;
@@ -136,9 +136,9 @@ public class Building : MonoBehaviour {
 			if(v <= -GENERATE_RANGE) {
 				Globals.People.Generate(Faction.Rebel, p);
 			}
-			else if(v >= GENERATE_RANGE) {
-				Globals.People.Generate(Faction.Police, p);
-			}
+			//else if(v >= GENERATE_RANGE) {
+			//	Globals.People.Generate(Faction.Police, p);
+			//}
 			else {
 				Globals.People.Generate(Faction.Neutral, p);
 			}

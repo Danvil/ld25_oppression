@@ -4,6 +4,8 @@ using System.Linq;
 
 public class Rebel : MonoBehaviour {
 	
+	const float SQUAD_DIST = 1.0f;
+	
 	Person myself;
 	
 	// Use this for initialization
@@ -34,7 +36,7 @@ public class Rebel : MonoBehaviour {
 			}
 		}
 		else {
-			if(myself.Squad && (Tools.Distance(myself, myself.Squad.Leader) > 2.0f || myself.Squad.Leader.IsFleeing)) {
+			if(myself.Squad && (Tools.Distance(myself, myself.Squad.Leader) > SQUAD_DIST || myself.Squad.Leader.IsFleeing)) {
 				myself.IsFleeing = false;
 				// return to squad
 				myself.FollowTarget = myself.Squad.Leader;
@@ -44,6 +46,11 @@ public class Rebel : MonoBehaviour {
 			}
 			else {
 				// normal behaviour
+				// look for leader
+				if(!myself.Squad) {
+					Person possibleLeader = (from x in myself.PersonsInRange where x.faction == Faction.Rebel && x.IsSquadLeader select x).FirstOrDefault();
+				}
+				// flee if ...
 				myself.IsFleeing = (myself.HitpointsCurrent <= myself.hitpointsMax/2 || myself.ThreatLevel <= -3);
 				if(!myself.IsFleeing && myself.ThreatLevel >= 3) {
 					// target
