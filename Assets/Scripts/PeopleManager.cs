@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PeopleManager : MonoBehaviour {
 	
-	const int MAX_PEOPLE = 1000;
+	const int MAX_PEOPLE = 500;
 	
 	public AudioClip[] audioHit;
 	public AudioClip[] audioDeath;

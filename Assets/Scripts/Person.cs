@@ -82,6 +82,8 @@ public class Person : MonoBehaviour {
 			randomGoalPicker.IsEnabled = q;
 	}		
 	
+	float next_update_move = 0.0f;
+	
 	// Use this for initialization
 	void Start () {	
 		HitpointsCurrent = hitpointsMax;
@@ -100,13 +102,13 @@ public class Person : MonoBehaviour {
 		AdditionalForces = new List<Vector3>();
 		IsFast = false;
 		
+		next_update_move = Random.Range(0.0f, UPDATE_MOVE_DT);
+		
 		randomGoalPicker = GetComponent<RandomGoalPicker>();
 		SetEnableRandomGoals(false);
 		updateInRangeCooldown = Random.Range(0.0f, UPDATE_IN_RANGE_COOLDOWN);
 
 	}
-	
-	float next_update_move = 0.0f;
 	
 	// Update is called once per frame
 	void Update () {
@@ -148,7 +150,7 @@ public class Person : MonoBehaviour {
 		
 		// movement and attack
 		if(!attack() && attackCooldown <= 0) {
-			if(MyTime.time >= next_update_move) {
+			if(MyTime.time >= next_update_move || IsSquadLeader) {
 				next_update_move = MyTime.time + UPDATE_MOVE_DT;
 				updateMove();
 			}
